@@ -1,26 +1,26 @@
-# 🪙 Smart Coin-Based Mobile Charging System
+# Smart Coin-Based Mobile Charging System
 
 > A coin-operated mobile charging station built with ATmega328, a multi-coin sensor, relay modules, and a 20×4 I²C LCD. Insert a coin → get 2 minutes of charging. Stack coins for more time. Designed for public spaces.
 
 ---
 
-## 🌐 Live Demo (Web Showcase)
+## Live Demo (Web Showcase)
 
-👉 **[View the interactive project page → leosat10.github.io](https://leosat10.github.io)**
+**[View the interactive project page → leosat10.github.io](https://leosat10.github.io)**
 
 Experience a live simulation of the coin insertion, port selection, and countdown timer — no hardware needed!
 
 ---
 
-## 📰 Full Project Article on Hackster.io
+## Full Project Article on Hackster.io
 
-👉 **[Read the full build guide on Hackster.io](https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938)**
+**[Read the full build guide on Hackster.io](https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938)**
 
 Includes complete circuit schematics, wiring diagrams, component list, and full Arduino source code.
 
 ---
 
-## 💡 How It Works
+## How It Works
 
 1. **Insert a coin** → Coin sensor validates it and signals the microcontroller
 2. **Credits stack** → Each coin adds 2 minutes of charging time
@@ -32,7 +32,7 @@ Includes complete circuit schematics, wiring diagrams, component list, and full 
 
 ---
 
-## 🧰 Hardware Components
+## Hardware Components
 
 | Component | Details |
 |---|---|
@@ -46,7 +46,7 @@ Includes complete circuit schematics, wiring diagrams, component list, and full 
 
 ---
 
-## 💻 Arduino Firmware (Quick Look)
+## Arduino Firmware (Quick Look)
 
 ```cpp
 #include <Wire.h>
@@ -84,7 +84,7 @@ Full source code available on **[Hackster.io](https://www.hackster.io/vsatish2k4
 
 ---
 
-## 📊 System Specs
+## System Specs
 
 | Parameter | Value |
 |---|---|
@@ -97,7 +97,7 @@ Full source code available on **[Hackster.io](https://www.hackster.io/vsatish2k4
 
 ---
 
-## 🚀 Possible Upgrades
+## Possible Upgrades
 
 - GSM module for remote monitoring
 - Digital payment (UPI / QR code) support
@@ -107,12 +107,12 @@ Full source code available on **[Hackster.io](https://www.hackster.io/vsatish2k4
 
 ---
 
-## 👤 Author
+## Author
 
 **LEOSAT** — [@vsatish2k4 on Hackster.io](https://www.hackster.io/vsatish2k4)
 
 ---
 
-## 📄 License
+## License
 
 Open Source Hardware · MIT License · © 2025
