@@ -1,35 +1,39 @@
 Smart Coin-Based Mobile Charging System
-A coin-operated mobile charging station built with ATmega328, a multi-coin sensor, relay modules, and a 20×4 I²C LCD. Insert a coin → get 2 minutes of charging. Stack coins for more time. Designed for public spaces.
 
-Live Demo (Web Showcase)
-View the interactive project page → leosat10.github.io
-Experience a live simulation of the coin insertion, port selection, and countdown timer — no hardware needed!
+Public‑friendly, coin‑operated USB charging station – insert a coin, get 2 minutes of power. Stack coins for more time, choose your port, and watch the countdown. Designed for malls, cafes, transit hubs, and waiting areas.
+Live Demo & Full Article
+Experience the simulation	Read the build guide
+Live Web Showcase
+Insert coins, select a port, watch the timer – no hardware needed	Full Project Article on Hackster.io
+Circuit schematics, wiring, code, and component list
+How It Works – Step by Step
 
-Full Project Article on Hackster.io
-Read the full build guide on Hackster.io
-Includes complete circuit schematics, wiring diagrams, component list, and full Arduino source code.
+    Insert a coin – Coin sensor validates it and signals the microcontroller.
 
-How It Works
-    1. Insert a coin → Coin sensor validates it and signals the microcontroller
-    2. Credits stack → Each coin adds 2 minutes of charging time
-    3. Select a port → Press one of 4 buttons to assign credit to a charging station
-    4. Relay activates → 5V USB power is switched ON for that port
-    5. Countdown runs → LCD displays remaining time in real-time
-    6. Auto cutoff → When time reaches 00:00, relay opens and charging stops
-    7. Top-up anytime → Insert more coins during a session to add time
+    Credits stack – Each valid coin adds 2 minutes of charging time.
+
+    Select a port – Press one of 4 buttons to assign credit to a charging station.
+
+    Relay activates – 5V USB power is switched ON for that port.
+
+    Countdown runs – LCD displays remaining time in real‑time.
+
+    Auto cutoff – When time reaches 00:00, relay opens and charging stops.
+
+    Top‑up anytime – Insert more coins during an active session to add time.
 
 Hardware Components
 Component	Details
 ATmega328 Microcontroller	Core MCU · 32KB flash · I²C + UART support
 Multi Coin Sensor	Validates coin type · outputs pulse per valid coin
-Relay Module × 4	Controls 5V USB power per charging port
+Relay Module (x4)	Controls 5V USB power per charging port
 LCD 20×4 I²C	Displays coin count + countdown per port
-Low Voltage Transformer Class II	Isolated safe power supply for public use
+Low Voltage Transformer	Class II isolated safe power supply for public use
 Buzzer	Audible beep on coin insertion confirmation
-Push Buttons × 4	Port selection by user
-
-
+Push Buttons (x4)	Port selection by user
 Arduino Firmware (Quick Look)
+cpp
+
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
@@ -41,13 +45,13 @@ void loop() {
   // Coin detection
   if (digitalRead(coinSlotPin) == LOW) {
     coinsInserted++;
-    tone(buzzerPin, 1000, 100); // beep on insert
+    tone(buzzerPin, 1000, 100);  // beep on insert
   }
 
   // Button press → start charging on selected port
   for (int i = 0; i < 4; i++) {
     if (digitalRead(buttonPins[i]) == LOW && coinsInserted > 0) {
-      startCharging(i); // activate relay + set timer
+      startCharging(i);   // activate relay + set timer
     }
   }
 
@@ -57,29 +61,33 @@ void loop() {
       stopCharging(i);
   }
 
-  updateLCD(); // refresh countdown display
+  updateLCD();  // refresh countdown display
 }
-Full source code available on Hackster.io
 
-System Specs
+    Full source code available on the Hackster.io article (link above).
+
+System Specifications
 Parameter	Value
 Charge time per coin	2 minutes (120 seconds)
 Number of ports	4 simultaneous stations
 Output voltage	5V USB
 Display	20×4 I²C LCD
 Coin top-up	Supported during active session
-Auto cutoff	Yes — relay opens at 00:00
-
-
+Auto cutoff	Yes – relay opens at 00:00
 Possible Upgrades
-    • GSM module for remote monitoring
-    • Digital payment (UPI / QR code) support
-    • IoT dashboard for usage analytics
-    • Weatherproof enclosure for outdoor use
-    • Solar panel power input
 
-Author
-LEOSAT — @vsatish2k4 on Hackster.io
+    GSM module for remote monitoring
 
-📄 License
-Open Source Hardware · MIT License · © 2025
+    Digital payment (UPI / QR code) support
+
+    IoT dashboard for usage analytics
+
+    Weatherproof enclosure for outdoor use
+
+    Solar panel power input
+
+Author & License
+
+Author – LEOSAT ( @vsatish2k4 on Hackster.io )
+
+License – Open Source Hardware · MIT License · (c) 2025
