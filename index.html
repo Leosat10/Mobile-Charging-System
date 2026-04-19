@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Piso | Smart Coin-Based Mobile Charging System</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ink: #0a0806;
+            --ink2: #120e09;
+            --ink3: #1c1610;
+            --ink4: #2a2016;
+            --gold: #c9922a;
+            --gold-lt: #e8b84b;
+            --gold-dim: #7a5418;
+            --copper: #b5652a;
+            --cream: #f5ead8;
+            --cream2: #c8b89a;
+            --cream3: #7a6a55;
+            --glow: rgba(201, 146, 42, 0.18);
+            --glow2: rgba(201, 146, 42, 0.06);
+            --border: rgba(201, 146, 42, 0.18);
+            --border2: rgba(201, 146, 42, 0.38);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--ink);
+            color: var(--cream);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* GRID OVERLAY */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201, 146, 42, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 146, 42, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* WARM VIGNETTE */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(201, 146, 42, 0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(181, 101, 42, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 8, 6, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .nav-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--gold-lt);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo span {
+            color: var(--cream3);
+            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-pill {
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            color: var(--gold);
+            background: rgba(201, 146, 42, 0.07);
+        }
+
+        .hackster-btn {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            padding: 0.45rem 1.1rem;
+            border-radius: 100px;
+            border: 1px solid var(--gold-dim);
+            background: linear-gradient(135deg, rgba(201, 146, 42, 0.2), rgba(181, 101, 42, 0.1));
+            color: var(--gold-lt);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .hackster-btn:hover {
+            background: linear-gradient(135deg, rgba(201, 146, 42, 0.35), rgba(181, 101, 42, 0.2));
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(201, 146, 42, 0.2);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 4rem;
+            align-items: center;
+            padding: 6rem 0 5rem;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 500;
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .hero-eyebrow::before,
+        .hero-eyebrow::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background: var(--gold-dim);
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 5.5vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.02;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            color: var(--cream);
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold-lt);
+        }
+
+        .hero-sub {
+            font-size: 1rem;
+            color: var(--cream2);
+            font-weight: 300;
+            max-width: 500px;
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-gold {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.75rem 2rem;
+            border-radius: 100px;
+            background: linear-gradient(135deg, var(--gold), var(--copper));
+            border: none;
+            color: var(--ink);
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 24px rgba(201, 146, 42, 0.3);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 36px rgba(201, 146, 42, 0.45);
+        }
+
+        .btn-outline {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 1.8rem;
+            border-radius: 100px;
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--cream2);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold-lt);
+            background: var(--glow2);
+        }
+
+        /* ── COIN HERO VISUAL ── */
+        .coin-visual {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            flex-shrink: 0;
+        }
+
+        .coin-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 146, 42, 0.2);
+            animation: spin-slow 20s linear infinite;
+        }
+
+        .coin-ring.r1 {
+            inset: 0;
+            animation-duration: 25s;
+        }
+
+        .coin-ring.r2 {
+            inset: 20px;
+            border-color: rgba(201, 146, 42, 0.12);
+            animation-direction: reverse;
+            animation-duration: 18s;
+        }
+
+        .coin-ring.r3 {
+            inset: 40px;
+            border-color: rgba(201, 146, 42, 0.08);
+            animation-duration: 12s;
+        }
+
+        @keyframes spin-slow {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .coin-center {
+            position: absolute;
+            inset: 60px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #c9922a, #e8b84b, #b5652a, #e8b84b, #c9922a);
+            box-shadow: 0 0 40px rgba(201, 146, 42, 0.5), 0 0 80px rgba(201, 146, 42, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: coin-float 4s ease-in-out infinite, coin-spin 8s linear infinite;
+        }
+
+        @keyframes coin-float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes coin-spin {
+            0% {
+                filter: brightness(1);
+            }
+
+            25% {
+                filter: brightness(1.3);
+            }
+
+            50% {
+                filter: brightness(0.9);
+            }
+
+            75% {
+                filter: brightness(1.2);
+            }
+
+            100% {
+                filter: brightness(1);
+            }
+        }
+
+        .coin-center i {
+            color: var(--ink);
+            font-size: 2rem;
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold-lt);
+            box-shadow: 0 0 8px var(--gold);
+            top: 8px;
+            left: 50%;
+            transform-origin: calc(50% - 3px) 102px;
+            animation: spin-slow 25s linear infinite;
+        }
+
+        .orbit-dot.d2 {
+            background: var(--copper);
+            box-shadow: 0 0 8px var(--copper);
+            top: 28px;
+            transform-origin: calc(50% - 3px) 82px;
+            animation-duration: 18s;
+            animation-direction: reverse;
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+            margin: 0;
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-item {
+            padding: 2rem 1.5rem;
+            border-right: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--glow2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-item:hover::before {
+            opacity: 1;
+        }
+
+        .stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--gold-lt);
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--cream3);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+
+        /* ── SECTION ── */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .sec-eyebrow {
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sec-eyebrow::before {
+            content: '◆';
+            font-size: 0.5rem;
+        }
+
+        .sec-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: var(--cream);
+        }
+
+        .sec-title em {
+            font-style: italic;
+            color: var(--gold-lt);
+        }
+
+        /* ── STORY ── */
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+            margin-top: 3rem;
+        }
+
+        .story-text p {
+            font-size: 0.95rem;
+            color: var(--cream2);
+            font-weight: 300;
+            line-height: 1.85;
+            margin-bottom: 1.2rem;
+        }
+
+        .story-highlight {
+            border-left: 2px solid var(--gold);
+            padding: 1rem 1.4rem;
+            background: rgba(201, 146, 42, 0.06);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: var(--cream2);
+            font-style: italic;
+            line-height: 1.7;
+            margin: 1.5rem 0;
+        }
+
+        /* FLOW STEPS */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 1.4rem;
+            align-items: flex-start;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(201, 146, 42, 0.08);
+            position: relative;
+        }
+
+        .flow-step:last-child {
+            border-bottom: none;
+        }
+
+        .flow-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--ink3), var(--ink4));
+            border: 1px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .flow-body h4 {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--cream);
+            margin-bottom: 0.3rem;
+        }
+
+        .flow-body p {
+            font-size: 0.8rem;
+            color: var(--cream3);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* ── HARDWARE GRID ── */
+        .hw-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--border);
+            margin-top: 3rem;
+        }
+
+        .hw-tile {
+            background: var(--ink2);
+            padding: 1.8rem 1.4rem;
+            transition: background 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hw-tile::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), var(--copper));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .hw-tile:hover {
+            background: var(--ink3);
+        }
+
+        .hw-tile:hover::after {
+            transform: scaleX(1);
+        }
+
+        .hw-tile-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(201, 146, 42, 0.1);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .hw-tile h3 {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--cream);
+            margin-bottom: 0.4rem;
+        }
+
+        .hw-tile p {
+            font-size: 0.76rem;
+            color: var(--cream3);
+            font-weight: 300;
+            line-height: 1.55;
+        }
+
+        /* ── DEMO ── */
+        .demo-wrap {
+            background: var(--ink2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+
+        .demo-topbar {
+            background: var(--ink3);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .demo-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold-lt);
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulse-anim 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-anim {
+            from {
+                opacity: 0.3;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .demo-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cream);
+            letter-spacing: 0.03em;
+        }
+
+        .demo-body {
+            padding: 2rem;
+        }
+
+        .demo-desc {
+            font-size: 0.85rem;
+            color: var(--cream3);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        /* LCD DISPLAY */
+        .lcd-screen {
+            background: #0d1a0d;
+            border: 2px solid #1a3020;
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            font-family: 'DM Mono', monospace;
+            margin-bottom: 2rem;
+            box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 200, 50, 0.05);
+            position: relative;
+        }
+
+        .lcd-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 3px);
+            pointer-events: none;
+        }
+
+        .lcd-row {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            line-height: 2;
+            color: #7fff4f;
+            text-shadow: 0 0 8px rgba(127, 255, 79, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .lcd-row span {
+            color: #4fc87f;
+        }
+
+        /* COIN SLOTS */
+        .demo-controls {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .coin-insert-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .coin-slot {
+            width: 70px;
+            height: 100px;
+            background: var(--ink);
+            border: 2px solid var(--border2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .coin-slot:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(201, 146, 42, 0.2);
+        }
+
+        .coin-slot-slit {
+            width: 36px;
+            height: 5px;
+            background: var(--ink4);
+            border-radius: 3px;
+            border: 1px solid var(--border2);
+        }
+
+        .coin-slot label {
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--cream3);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .coin-animate {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--copper));
+            box-shadow: 0 0 8px var(--gold);
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+        }
+
+        .coin-animate.drop {
+            animation: coin-drop 0.5s ease-in forwards;
+        }
+
+        @keyframes coin-drop {
+            0% {
+                top: -30px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 50%;
+                opacity: 0;
+            }
+        }
+
+        .coin-count-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--gold-lt);
+        }
+
+        .coin-label {
+            font-size: 0.68rem;
+            color: var(--cream3);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* CHARGING STATIONS */
+        .stations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        .station {
+            background: var(--ink);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .station.active {
+            border-color: var(--gold);
+            background: rgba(201, 146, 42, 0.05);
+        }
+
+        .station-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.7rem;
+        }
+
+        .station-id {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .station-status {
+            font-size: 0.62rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .status-idle {
+            background: rgba(122, 106, 85, 0.15);
+            border: 1px solid rgba(122, 106, 85, 0.3);
+            color: var(--cream3);
+        }
+
+        .status-charging {
+            background: rgba(201, 146, 42, 0.15);
+            border: 1px solid var(--gold-dim);
+            color: var(--gold-lt);
+        }
+
+        .station-timer {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--cream);
+            margin: 0.3rem 0;
+        }
+
+        .station-timer.active {
+            color: var(--gold-lt);
+            text-shadow: 0 0 12px rgba(232, 184, 75, 0.4);
+        }
+
+        .station-bar {
+            height: 3px;
+            background: var(--ink4);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .station-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--copper));
+            border-radius: 2px;
+            transition: width 1s linear;
+        }
+
+        .start-btn {
+            width: 100%;
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            background: rgba(201, 146, 42, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--cream2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 400;
+        }
+
+        .start-btn:hover:not(:disabled) {
+            background: rgba(201, 146, 42, 0.2);
+            border-color: var(--gold);
+            color: var(--gold-lt);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .demo-footer {
+            padding: 1rem 2rem;
+            background: var(--ink3);
+            border-top: 1px solid var(--border);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--cream3);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* ── CODE ── */
+        pre {
+            background: #060402;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 1.6rem;
+            overflow-x: auto;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.76rem;
+            color: #c8b898;
+            line-height: 1.75;
+            margin-top: 2rem;
+        }
+
+        .code-kw {
+            color: #e8b84b;
+        }
+
+        .code-fn {
+            color: #c9922a;
+        }
+
+        .code-str {
+            color: #7fc89a;
+        }
+
+        .code-cmt {
+            color: #4a3e2e;
+            font-style: italic;
+        }
+
+        .code-num {
+            color: #d4a574;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 0 2.5rem;
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gold-lt);
+            letter-spacing: 0.04em;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            font-size: 0.8rem;
+            color: var(--cream3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--gold-lt);
+        }
+
+        .footer-copy {
+            font-size: 0.72rem;
+            color: var(--cream3);
+            opacity: 0.5;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:900px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .coin-visual {
+                display: none;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .demo-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:560px) {
+            .wrap {
+                padding: 0 1.2rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .stations-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ANIMATIONS */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fade-up-anim 0.7s ease forwards;
+        }
+
+        @keyframes fade-up-anim {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .d1 {
+            animation-delay: 0.1s
+        }
+
+        .d2 {
+            animation-delay: 0.2s
+        }
+
+        .d3 {
+            animation-delay: 0.3s
+        }
+
+        .d4 {
+            animation-delay: 0.4s
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-inner">
+            <div class="nav-logo">E‑Piso <span>/ Smart Charger</span></div>
+            <div class="nav-right">
+                <span class="nav-pill">Beginner · IoT</span>
+                <a class="hackster-btn" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
+                    target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Hackster.io
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="wrap">
+        <section class="hero">
+            <div class="hero-left fade-up d1">
+                <div class="hero-eyebrow">Coin-Based Automation · Arduino</div>
+                <h1>Smart <em>Coin-Based</em><br>Mobile Charging<br>System</h1>
+                <p class="hero-sub">Insert a coin, plug in your phone. A public charging station that allocates precise
+                    charging
+                    time per coin — smart, tamper-resistant, and scalable.</p>
+                <div class="hero-actions">
+                    <a class="btn-gold" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
+                        target="_blank">
+                        <i class="fas fa-book-open"></i> Full Build Guide
+                    </a>
+                    <a class="btn-outline" href="#demo">
+                        <i class="fas fa-play-circle"></i> Live Demo
+                    </a>
+                </div>
+            </div>
+            <div class="coin-visual fade-up d2">
+                <div class="coin-ring r1"></div>
+                <div class="coin-ring r2"></div>
+                <div class="coin-ring r3"></div>
+                <div class="orbit-dot"></div>
+                <div class="orbit-dot d2"></div>
+                <div class="coin-center"><i class="fas fa-coins"></i></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STATS BAR -->
+    <div class="wrap">
+        <div class="stats-bar fade-up d1">
+            <div class="stat-item">
+                <div class="stat-num">2</div>
+                <div class="stat-label">Minutes per coin</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">4</div>
+                <div class="stat-label">Charging stations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">5V</div>
+                <div class="stat-label">USB output rail</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">∞</div>
+                <div class="stat-label">Coins stackable</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STORY -->
+    <div class="wrap">
+        <section class="section">
+            <div class="sec-eyebrow">Project overview</div>
+            <div class="sec-title">The <em>Problem</em> & Solution</div>
+            <div class="story-grid">
+                <div class="story-text fade-up d1">
+                    <p>Public charging stations are often free, vandalism-prone, and costly to maintain. E-Piso solves
+                        this by
+                        gating charging access behind a coin mechanism — a proven, low-tech barrier that requires zero
+                        connectivity
+                        or accounts.</p>
+                    <div class="story-highlight">
+                        "Insert a valid coin → phone charges for 2 minutes. Insert more coins → time stacks up. Simple,
+                        physical,
+                        reliable."
+                    </div>
+                    <p>The system is built around an ATmega328 microcontroller that monitors a multi-coin sensor,
+                        controls relay
+                        switches for up to 4 charging ports, and displays remaining time on a 20×4 I²C LCD display.</p>
+                </div>
+                <div class="fade-up d2">
+                    <div class="flow">
+                        <div class="flow-step">
+                            <div class="flow-num">01</div>
+                            <div class="flow-body">
+                                <h4>Coin Detection</h4>
+                                <p>Multi-coin sensor validates the coin type and sends a digital pulse to the
+                                    microcontroller.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-num">02</div>
+                            <div class="flow-body">
+                                <h4>Time Allocation</h4>
+                                <p>Each valid coin adds 2 minutes to the charging credit. Credits stack indefinitely
+                                    before a port is
+                                    selected.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-num">03</div>
+                            <div class="flow-body">
+                                <h4>Port Selection</h4>
+                                <p>User presses one of 4 buttons to assign the credit to a specific charging port. Relay
+                                    activates.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-num">04</div>
+                            <div class="flow-body">
+                                <h4>Countdown & Auto-cutoff</h4>
+                                <p>LCD shows reverse countdown. When time reaches 00:00, relay opens and charging stops
+                                    automatically.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-num">05</div>
+                            <div class="flow-body">
+                                <h4>Top-Up Anytime</h4>
+                                <p>Insert more coins during an active session — time is added to the remaining balance
+                                    in real-time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HARDWARE -->
+    <div class="wrap">
+        <section class="section">
+            <div class="sec-eyebrow">Bill of materials</div>
+            <div class="sec-title">Hardware <em>Components</em></div>
+            <div class="hw-grid fade-up d1">
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-microchip"></i></div>
+                    <h3>ATmega328</h3>
+                    <p>Core microcontroller · 32KB flash · 14 digital I/O · hardware UART/I²C</p>
+                </div>
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Multi Coin Sensor</h3>
+                    <p>Accepts multiple coin denominations · outputs pulse signal per valid coin</p>
+                </div>
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-plug"></i></div>
+                    <h3>Relay Module × 4</h3>
+                    <p>5V relay per port · controls 5V USB power rail · NC/NO switching</p>
+                </div>
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-display"></i></div>
+                    <h3>LCD 20×4 I²C</h3>
+                    <p>Displays station status · coin count · real-time countdown per port</p>
+                </div>
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Transformer Class II</h3>
+                    <p>Low voltage · isolated supply · safe for public installation</p>
+                </div>
+                <div class="hw-tile">
+                    <div class="hw-tile-icon"><i class="fas fa-volume-up"></i></div>
+                    <h3>Buzzer</h3>
+                    <p>Audible confirmation on coin insert · 100ms beep via tone() call</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- LIVE DEMO -->
+    <div class="wrap" id="demo">
+        <section class="section">
+            <div class="sec-eyebrow">Interactive simulation</div>
+            <div class="sec-title"><em>Live</em> Demo</div>
+            <div class="demo-wrap fade-up d1">
+                <div class="demo-topbar">
+                    <div class="demo-topbar-left">
+                        <div class="pulse-dot"></div>
+                        <span class="demo-title">E-Piso Charger — Simulation Panel</span>
+                    </div>
+                    <span style="font-size:0.72rem; color:var(--cream3); font-family:'DM Mono',monospace;">ATmega328 ·
+                        I²C LCD ·
+                        4-Port</span>
+                </div>
+                <div class="demo-body">
+                    <p class="demo-desc">Click the coin slot to insert coins. Then press START on any station to begin
+                        charging.
+                        Watch the countdown tick in real time.</p>
+
+                    <!-- LCD -->
+                    <div class="lcd-screen">
+                        <div class="lcd-row" id="lcd1">E-Piso Charger&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div class="lcd-row" id="lcd2">2 mins/PHP&nbsp;&nbsp;&nbsp;<span id="lcd-coins">C: 0</span>
+                        </div>
+                        <div class="lcd-row" id="lcd3">1|<span id="t1">00:00</span>&nbsp;&nbsp;&nbsp;2|<span
+                                id="t2">00:00</span>
+                        </div>
+                        <div class="lcd-row" id="lcd4">3|<span id="t3">00:00</span>&nbsp;&nbsp;&nbsp;4|<span
+                                id="t4">00:00</span>
+                        </div>
+                    </div>
+
+                    <div class="demo-controls">
+                        <!-- Coin insert -->
+                        <div class="coin-insert-area">
+                            <div class="coin-slot" id="coinSlot" onclick="insertCoin()">
+                                <div class="coin-slot-slit"></div>
+                                <div class="coin-animate" id="coinAnim"></div>
+                                <i class="fas fa-coins" style="color:var(--gold); font-size:1.1rem;"></i>
+                                <label>Insert Coin</label>
+                            </div>
+                            <div class="coin-count-badge" id="coinBadge">0</div>
+                            <div class="coin-label">coins ready</div>
+                        </div>
+
+                        <!-- Stations -->
+                        <div class="stations-grid" id="stationsGrid">
+                            <!-- generated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-footer">
+                    <i class="fas fa-terminal" style="color:var(--gold);"></i>
+                    <span id="consoleMsg">&gt;_ System ready. Insert coins then press START on any port.</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CODE -->
+    <div class="wrap">
+        <section class="section">
+            <div class="sec-eyebrow">Embedded firmware</div>
+            <div class="sec-title">Arduino <em>Code</em></div>
+            <p style="font-size:0.88rem; color:var(--cream3); font-weight:300; margin-top:0.5rem;">Core loop handling
+                coin
+                detection, relay switching, and LCD countdown. Full source on Hackster.io.</p>
+            <pre><code><span class="code-kw">#include</span> <span class="code-str">&lt;Wire.h&gt;</span>
+<span class="code-kw">#include</span> <span class="code-str">&lt;LiquidCrystal_I2C.h&gt;</span>
+
+LiquidCrystal_I2C lcd(<span class="code-num">0x27</span>, <span class="code-num">20</span>, <span class="code-num">4</span>);
+
+<span class="code-kw">const int</span> relayPins[<span class="code-num">4</span>]  = { <span class="code-num">2</span>, <span class="code-num">3</span>, <span class="code-num">4</span>, <span class="code-num">5</span> };
+<span class="code-kw">const int</span> buttonPins[<span class="code-num">4</span>] = { <span class="code-num">6</span>, <span class="code-num">7</span>, <span class="code-num">8</span>, <span class="code-num">9</span> };
+<span class="code-kw">const int</span> coinSlotPin   = <span class="code-num">11</span>;
+<span class="code-kw">const unsigned long</span> chargeTimePerCoin = <span class="code-num">120</span>; <span class="code-cmt">// 2 min in seconds</span>
+
+<span class="code-kw">void</span> <span class="code-fn">loop</span>() {
+  <span class="code-cmt">// Coin detection with debounce</span>
+  <span class="code-kw">if</span> (digitalRead(coinSlotPin) == LOW) {
+    delay(<span class="code-num">50</span>);
+    <span class="code-kw">if</span> (digitalRead(coinSlotPin) == LOW) {
+      coinsInserted++;
+      tone(buzzerPin, <span class="code-num">1000</span>, <span class="code-num">100</span>); <span class="code-cmt">// beep!</span>
+    }
+  }
+  <span class="code-cmt">// Button → start charging on selected port</span>
+  <span class="code-kw">for</span> (<span class="code-kw">int</span> i = <span class="code-num">0</span>; i &lt; <span class="code-num">4</span>; i++) {
+    <span class="code-kw">if</span> (digitalRead(buttonPins[i]) == LOW &amp;&amp; coinsInserted &gt; <span class="code-num">0</span>) {
+      <span class="code-fn">startCharging</span>(i);
+    }
+  }
+  <span class="code-cmt">// Auto-cutoff when time expires</span>
+  <span class="code-kw">for</span> (<span class="code-kw">int</span> i = <span class="code-num">0</span>; i &lt; <span class="code-num">4</span>; i++) {
+    <span class="code-kw">if</span> (relayEndTimes[i] &gt; <span class="code-num">0</span> &amp;&amp; millis() &gt;= relayEndTimes[i])
+      <span class="code-fn">stopCharging</span>(i);
+  }
+  <span class="code-fn">updateLCD</span>();
+}</code></pre>
+        </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FOOTER -->
+    <div class="wrap">
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-brand">E‑Piso ✦</div>
+                <div class="footer-links">
+                    <a class="footer-link" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
+                        target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Full article on Hackster.io
+                    </a>
+                    <a class="footer-link" href="https://www.hackster.io/vsatish2k4" target="_blank">
+                        <i class="fas fa-user"></i> LEOSAT on Hackster
+                    </a>
+                </div>
+            </div>
+            <p class="footer-copy">Smart Coin-Based Mobile Charging System · Open Source Hardware · MIT License · © 2025
+                LEOSAT</p>
+        </footer>
+    </div>
+
+    <script>
+        // ── DEMO STATE ──
+        let coins = 0;
+        const CHARGE_PER_COIN = 120; // seconds
+        const stations = [
+            { id: 1, remaining: 0, total: 0, interval: null },
+            { id: 2, remaining: 0, total: 0, interval: null },
+            { id: 3, remaining: 0, total: 0, interval: null },
+            { id: 4, remaining: 0, total: 0, interval: null },
+        ];
+
+        function fmtTime(s) {
+            const m = Math.floor(s / 60), sec = s % 60;
+            return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        function setConsole(msg) {
+            document.getElementById('consoleMsg').textContent = '>_ ' + msg;
+        }
+
+        function updateLCD() {
+            document.getElementById('lcd-coins').textContent = 'C: ' + coins;
+            const ids = ['t1', 't2', 't3', 't4'];
+            stations.forEach((st, i) => {
+                document.getElementById(ids[i]).textContent = fmtTime(st.remaining);
+            });
+        }
+
+        function renderStations() {
+            const grid = document.getElementById('stationsGrid');
+            grid.innerHTML = '';
+            stations.forEach((st, i) => {
+                const active = st.remaining > 0;
+                const pct = st.total > 0 ? (st.remaining / st.total * 100).toFixed(1) : 0;
+                const div = document.createElement('div');
+                div.className = 'station' + (active ? ' active' : '');
+                div.innerHTML = `
+      <div class="station-header">
+        <span class="station-id">PORT ${st.id}</span>
+        <span class="station-status ${active ? 'status-charging' : 'status-idle'}">${active ? 'Charging' : 'Idle'}</span>
+      </div>
+      <div class="station-timer ${active ? 'active' : ''}">${fmtTime(st.remaining)}</div>
+      <div class="station-bar"><div class="station-bar-fill" style="width:${pct}%"></div></div>
+      <button class="start-btn" onclick="startStation(${i})" ${(coins === 0 || active) ? 'disabled' : ''}>
+        ${active ? '<i class="fas fa-bolt"></i> Charging...' : '<i class="fas fa-play"></i> START — ' + coins + ' coin' + (coins !== 1 ? 's' : '')}
+      </button>`;
+                grid.appendChild(div);
+            });
+        }
+
+        function insertCoin() {
+            coins++;
+            document.getElementById('coinBadge').textContent = coins;
+
+            // Animate coin drop
+            const anim = document.getElementById('coinAnim');
+            anim.classList.remove('drop');
+            void anim.offsetWidth;
+            anim.classList.add('drop');
+
+            setConsole(`Coin accepted! Credit: ${coins} coin${coins !== 1 ? 's' : ''} (${fmtTime(coins * CHARGE_PER_COIN)} total)`);
+            updateLCD();
+            renderStations();
+        }
+
+        function startStation(idx) {
+            if (coins === 0 || stations[idx].remaining > 0) return;
+            const st = stations[idx];
+            const addTime = coins * CHARGE_PER_COIN;
+
+            // If already running, add time
+            if (st.interval) {
+                st.remaining += addTime;
+                st.total += addTime;
+            } else {
+                st.remaining = addTime;
+                st.total = addTime;
+                st.interval = setInterval(() => {
+                    if (st.remaining > 0) {
+                        st.remaining--;
+                        updateLCD();
+                        renderStations();
+                    } else {
+                        clearInterval(st.interval);
+                        st.interval = null;
+                        st.total = 0;
+                        setConsole(`Port ${st.id} charging complete. Session ended.`);
+                        updateLCD();
+                        renderStations();
+                    }
+                }, 200); // 200ms per tick = fast demo (real = 1000ms)
+            }
+
+            setConsole(`Port ${st.id} charging started — ${fmtTime(addTime)} allocated.`);
+            coins = 0;
+            document.getElementById('coinBadge').textContent = 0;
+            updateLCD();
+            renderStations();
+        }
+
+        // Init
+        renderStations();
+        updateLCD();
+    </script>
+</body>
+
+</html>
