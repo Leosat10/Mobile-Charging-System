@@ -1,1512 +1,952 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Piso | Smart Coin-Based Mobile Charging System</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --ink: #0a0806;
-            --ink2: #120e09;
-            --ink3: #1c1610;
-            --ink4: #2a2016;
-            --gold: #c9922a;
-            --gold-lt: #e8b84b;
-            --gold-dim: #7a5418;
-            --copper: #b5652a;
-            --cream: #f5ead8;
-            --cream2: #c8b89a;
-            --cream3: #7a6a55;
-            --glow: rgba(201, 146, 42, 0.18);
-            --glow2: rgba(201, 146, 42, 0.06);
-            --border: rgba(201, 146, 42, 0.18);
-            --border2: rgba(201, 146, 42, 0.38);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--ink);
-            color: var(--cream);
-            overflow-x: hidden;
-            cursor: default;
-        }
-
-        /* GRID OVERLAY */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(201, 146, 42, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201, 146, 42, 0.04) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* WARM VIGNETTE */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(201, 146, 42, 0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(181, 101, 42, 0.06) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .wrap {
-            position: relative;
-            z-index: 1;
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* ── NAV ── */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-            background: rgba(10, 8, 6, 0.88);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-        }
-
-        .nav-inner {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            color: var(--gold-lt);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-logo span {
-            color: var(--cream3);
-            font-weight: 400;
-            font-size: 1rem;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-pill {
-            font-size: 0.7rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-weight: 500;
-            padding: 0.3rem 1rem;
-            border-radius: 100px;
-            border: 1px solid var(--border);
-            color: var(--gold);
-            background: rgba(201, 146, 42, 0.07);
-        }
-
-        .hackster-btn {
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            padding: 0.45rem 1.1rem;
-            border-radius: 100px;
-            border: 1px solid var(--gold-dim);
-            background: linear-gradient(135deg, rgba(201, 146, 42, 0.2), rgba(181, 101, 42, 0.1));
-            color: var(--gold-lt);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: all 0.2s;
-        }
-
-        .hackster-btn:hover {
-            background: linear-gradient(135deg, rgba(201, 146, 42, 0.35), rgba(181, 101, 42, 0.2));
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(201, 146, 42, 0.2);
-        }
-
-        /* ── HERO ── */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 4rem;
-            align-items: center;
-            padding: 6rem 0 5rem;
-        }
-
-        .hero-eyebrow {
-            font-size: 0.72rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--gold);
-            font-weight: 500;
-            margin-bottom: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-        }
-
-        .hero-eyebrow::before,
-        .hero-eyebrow::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 1px;
-            background: var(--gold-dim);
-        }
-
-        .hero h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3rem, 5.5vw, 5.5rem);
-            font-weight: 700;
-            line-height: 1.02;
-            letter-spacing: -0.02em;
-            margin-bottom: 1.5rem;
-            color: var(--cream);
-        }
-
-        .hero h1 em {
-            font-style: italic;
-            color: var(--gold-lt);
-        }
-
-        .hero-sub {
-            font-size: 1rem;
-            color: var(--cream2);
-            font-weight: 300;
-            max-width: 500px;
-            line-height: 1.75;
-            margin-bottom: 2rem;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-gold {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 0.75rem 2rem;
-            border-radius: 100px;
-            background: linear-gradient(135deg, var(--gold), var(--copper));
-            border: none;
-            color: var(--ink);
-            cursor: pointer;
-            transition: all 0.25s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 4px 24px rgba(201, 146, 42, 0.3);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 36px rgba(201, 146, 42, 0.45);
-        }
-
-        .btn-outline {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            padding: 0.75rem 1.8rem;
-            border-radius: 100px;
-            background: transparent;
-            border: 1px solid var(--border2);
-            color: var(--cream2);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--gold);
-            color: var(--gold-lt);
-            background: var(--glow2);
-        }
-
-        /* ── COIN HERO VISUAL ── */
-        .coin-visual {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            flex-shrink: 0;
-        }
-
-        .coin-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(201, 146, 42, 0.2);
-            animation: spin-slow 20s linear infinite;
-        }
-
-        .coin-ring.r1 {
-            inset: 0;
-            animation-duration: 25s;
-        }
-
-        .coin-ring.r2 {
-            inset: 20px;
-            border-color: rgba(201, 146, 42, 0.12);
-            animation-direction: reverse;
-            animation-duration: 18s;
-        }
-
-        .coin-ring.r3 {
-            inset: 40px;
-            border-color: rgba(201, 146, 42, 0.08);
-            animation-duration: 12s;
-        }
-
-        @keyframes spin-slow {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .coin-center {
-            position: absolute;
-            inset: 60px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #c9922a, #e8b84b, #b5652a, #e8b84b, #c9922a);
-            box-shadow: 0 0 40px rgba(201, 146, 42, 0.5), 0 0 80px rgba(201, 146, 42, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            animation: coin-float 4s ease-in-out infinite, coin-spin 8s linear infinite;
-        }
-
-        @keyframes coin-float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-8px);
-            }
-        }
-
-        @keyframes coin-spin {
-            0% {
-                filter: brightness(1);
-            }
-
-            25% {
-                filter: brightness(1.3);
-            }
-
-            50% {
-                filter: brightness(0.9);
-            }
-
-            75% {
-                filter: brightness(1.2);
-            }
-
-            100% {
-                filter: brightness(1);
-            }
-        }
-
-        .coin-center i {
-            color: var(--ink);
-            font-size: 2rem;
-        }
-
-        .orbit-dot {
-            position: absolute;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--gold-lt);
-            box-shadow: 0 0 8px var(--gold);
-            top: 8px;
-            left: 50%;
-            transform-origin: calc(50% - 3px) 102px;
-            animation: spin-slow 25s linear infinite;
-        }
-
-        .orbit-dot.d2 {
-            background: var(--copper);
-            box-shadow: 0 0 8px var(--copper);
-            top: 28px;
-            transform-origin: calc(50% - 3px) 82px;
-            animation-duration: 18s;
-            animation-direction: reverse;
-        }
-
-        /* ── DIVIDER ── */
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-            margin: 0;
-        }
-
-        /* ── STATS BAR ── */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .stat-item {
-            padding: 2rem 1.5rem;
-            border-right: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-item:last-child {
-            border-right: none;
-        }
-
-        .stat-item::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--glow2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .stat-item:hover::before {
-            opacity: 1;
-        }
-
-        .stat-num {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.4rem;
-            font-weight: 700;
-            color: var(--gold-lt);
-            line-height: 1;
-            margin-bottom: 0.4rem;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--cream3);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-weight: 400;
-        }
-
-        /* ── SECTION ── */
-        .section {
-            padding: 5rem 0;
-        }
-
-        .sec-eyebrow {
-            font-size: 0.7rem;
-            color: var(--gold);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            font-weight: 500;
-            margin-bottom: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .sec-eyebrow::before {
-            content: '◆';
-            font-size: 0.5rem;
-        }
-
-        .sec-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2rem, 3.5vw, 3rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            color: var(--cream);
-        }
-
-        .sec-title em {
-            font-style: italic;
-            color: var(--gold-lt);
-        }
-
-        /* ── STORY ── */
-        .story-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: start;
-            margin-top: 3rem;
-        }
-
-        .story-text p {
-            font-size: 0.95rem;
-            color: var(--cream2);
-            font-weight: 300;
-            line-height: 1.85;
-            margin-bottom: 1.2rem;
-        }
-
-        .story-highlight {
-            border-left: 2px solid var(--gold);
-            padding: 1rem 1.4rem;
-            background: rgba(201, 146, 42, 0.06);
-            border-radius: 0 8px 8px 0;
-            font-size: 0.9rem;
-            color: var(--cream2);
-            font-style: italic;
-            line-height: 1.7;
-            margin: 1.5rem 0;
-        }
-
-        /* FLOW STEPS */
-        .flow {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .flow-step {
-            display: flex;
-            gap: 1.4rem;
-            align-items: flex-start;
-            padding: 1.2rem 0;
-            border-bottom: 1px solid rgba(201, 146, 42, 0.08);
-            position: relative;
-        }
-
-        .flow-step:last-child {
-            border-bottom: none;
-        }
-
-        .flow-num {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, var(--ink3), var(--ink4));
-            border: 1px solid var(--border2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'DM Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--gold);
-            font-weight: 500;
-        }
-
-        .flow-body h4 {
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--cream);
-            margin-bottom: 0.3rem;
-        }
-
-        .flow-body p {
-            font-size: 0.8rem;
-            color: var(--cream3);
-            font-weight: 300;
-            line-height: 1.6;
-        }
-
-        /* ── HARDWARE GRID ── */
-        .hw-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1px;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--border);
-            margin-top: 3rem;
-        }
-
-        .hw-tile {
-            background: var(--ink2);
-            padding: 1.8rem 1.4rem;
-            transition: background 0.25s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hw-tile::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--gold), var(--copper));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s;
-        }
-
-        .hw-tile:hover {
-            background: var(--ink3);
-        }
-
-        .hw-tile:hover::after {
-            transform: scaleX(1);
-        }
-
-        .hw-tile-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: rgba(201, 146, 42, 0.1);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: var(--gold);
-            margin-bottom: 1rem;
-        }
-
-        .hw-tile h3 {
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--cream);
-            margin-bottom: 0.4rem;
-        }
-
-        .hw-tile p {
-            font-size: 0.76rem;
-            color: var(--cream3);
-            font-weight: 300;
-            line-height: 1.55;
-        }
-
-        /* ── DEMO ── */
-        .demo-wrap {
-            background: var(--ink2);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            margin-top: 3rem;
-        }
-
-        .demo-topbar {
-            background: var(--ink3);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 1.6rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .demo-topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--gold-lt);
-            box-shadow: 0 0 8px var(--gold);
-            animation: pulse-anim 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-anim {
-            from {
-                opacity: 0.3;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .demo-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--cream);
-            letter-spacing: 0.03em;
-        }
-
-        .demo-body {
-            padding: 2rem;
-        }
-
-        .demo-desc {
-            font-size: 0.85rem;
-            color: var(--cream3);
-            font-weight: 300;
-            margin-bottom: 2rem;
-        }
-
-        /* LCD DISPLAY */
-        .lcd-screen {
-            background: #0d1a0d;
-            border: 2px solid #1a3020;
-            border-radius: 10px;
-            padding: 1.2rem 1.5rem;
-            font-family: 'DM Mono', monospace;
-            margin-bottom: 2rem;
-            box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 200, 50, 0.05);
-            position: relative;
-        }
-
-        .lcd-screen::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 8px;
-            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 3px);
-            pointer-events: none;
-        }
-
-        .lcd-row {
-            font-size: 0.85rem;
-            letter-spacing: 0.08em;
-            line-height: 2;
-            color: #7fff4f;
-            text-shadow: 0 0 8px rgba(127, 255, 79, 0.7);
-            position: relative;
-            z-index: 1;
-        }
-
-        .lcd-row span {
-            color: #4fc87f;
-        }
-
-        /* COIN SLOTS */
-        .demo-controls {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
-
-        .coin-insert-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .coin-slot {
-            width: 70px;
-            height: 100px;
-            background: var(--ink);
-            border: 2px solid var(--border2);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .coin-slot:hover {
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(201, 146, 42, 0.2);
-        }
-
-        .coin-slot-slit {
-            width: 36px;
-            height: 5px;
-            background: var(--ink4);
-            border-radius: 3px;
-            border: 1px solid var(--border2);
-        }
-
-        .coin-slot label {
-            font-size: 0.62rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--cream3);
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .coin-animate {
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--copper));
-            box-shadow: 0 0 8px var(--gold);
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-        }
-
-        .coin-animate.drop {
-            animation: coin-drop 0.5s ease-in forwards;
-        }
-
-        @keyframes coin-drop {
-            0% {
-                top: -30px;
-                opacity: 1;
-            }
-
-            100% {
-                top: 50%;
-                opacity: 0;
-            }
-        }
-
-        .coin-count-badge {
-            font-family: 'DM Mono', monospace;
-            font-size: 1.4rem;
-            font-weight: 500;
-            color: var(--gold-lt);
-        }
-
-        .coin-label {
-            font-size: 0.68rem;
-            color: var(--cream3);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        /* CHARGING STATIONS */
-        .stations-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.8rem;
-        }
-
-        .station {
-            background: var(--ink);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            transition: all 0.3s;
-        }
-
-        .station.active {
-            border-color: var(--gold);
-            background: rgba(201, 146, 42, 0.05);
-        }
-
-        .station-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.7rem;
-        }
-
-        .station-id {
-            font-family: 'DM Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--gold);
-            font-weight: 500;
-        }
-
-        .station-status {
-            font-size: 0.62rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 100px;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .status-idle {
-            background: rgba(122, 106, 85, 0.15);
-            border: 1px solid rgba(122, 106, 85, 0.3);
-            color: var(--cream3);
-        }
-
-        .status-charging {
-            background: rgba(201, 146, 42, 0.15);
-            border: 1px solid var(--gold-dim);
-            color: var(--gold-lt);
-        }
-
-        .station-timer {
-            font-family: 'DM Mono', monospace;
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--cream);
-            margin: 0.3rem 0;
-        }
-
-        .station-timer.active {
-            color: var(--gold-lt);
-            text-shadow: 0 0 12px rgba(232, 184, 75, 0.4);
-        }
-
-        .station-bar {
-            height: 3px;
-            background: var(--ink4);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .station-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--copper));
-            border-radius: 2px;
-            transition: width 1s linear;
-        }
-
-        .start-btn {
-            width: 100%;
-            margin-top: 0.8rem;
-            padding: 0.5rem;
-            background: rgba(201, 146, 42, 0.1);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--cream2);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 400;
-        }
-
-        .start-btn:hover:not(:disabled) {
-            background: rgba(201, 146, 42, 0.2);
-            border-color: var(--gold);
-            color: var(--gold-lt);
-        }
-
-        .start-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .demo-footer {
-            padding: 1rem 2rem;
-            background: var(--ink3);
-            border-top: 1px solid var(--border);
-            font-family: 'DM Mono', monospace;
-            font-size: 0.72rem;
-            color: var(--cream3);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        /* ── CODE ── */
-        pre {
-            background: #060402;
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 1.6rem;
-            overflow-x: auto;
-            font-family: 'DM Mono', monospace;
-            font-size: 0.76rem;
-            color: #c8b898;
-            line-height: 1.75;
-            margin-top: 2rem;
-        }
-
-        .code-kw {
-            color: #e8b84b;
-        }
-
-        .code-fn {
-            color: #c9922a;
-        }
-
-        .code-str {
-            color: #7fc89a;
-        }
-
-        .code-cmt {
-            color: #4a3e2e;
-            font-style: italic;
-        }
-
-        .code-num {
-            color: #d4a574;
-        }
-
-        /* ── FOOTER ── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 3rem 0 2.5rem;
-        }
-
-        .footer-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 2rem;
-        }
-
-        .footer-brand {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--gold-lt);
-            letter-spacing: 0.04em;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-link {
-            font-size: 0.8rem;
-            color: var(--cream3);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: color 0.2s;
-        }
-
-        .footer-link:hover {
-            color: var(--gold-lt);
-        }
-
-        .footer-copy {
-            font-size: 0.72rem;
-            color: var(--cream3);
-            opacity: 0.5;
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        /* RESPONSIVE */
-        @media(max-width:900px) {
-            .hero {
-                grid-template-columns: 1fr;
-            }
-
-            .coin-visual {
-                display: none;
-            }
-
-            .story-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .demo-controls {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media(max-width:560px) {
-            .wrap {
-                padding: 0 1.2rem;
-            }
-
-            .stats-bar {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-
-            .stations-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        /* ANIMATIONS */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(24px);
-            animation: fade-up-anim 0.7s ease forwards;
-        }
-
-        @keyframes fade-up-anim {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .d1 {
-            animation-delay: 0.1s
-        }
-
-        .d2 {
-            animation-delay: 0.2s
-        }
-
-        .d3 {
-            animation-delay: 0.3s
-        }
-
-        .d4 {
-            animation-delay: 0.4s
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinCharge | Smart Coin-Based Mobile Charging System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg:       #07080f;
+  --bg2:      #0c0d1a;
+  --bg3:      #111220;
+  --glass:    rgba(255,255,255,0.04);
+  --glass2:   rgba(255,255,255,0.07);
+  --glass3:   rgba(255,255,255,0.11);
+  --border:   rgba(255,255,255,0.09);
+  --border2:  rgba(255,255,255,0.18);
+  --text:     #eef0ff;
+  --text2:    #9fa3c7;
+  --text3:    #555878;
+  /* holo spectrum */
+  --h1: #a78bfa; /* violet */
+  --h2: #38bdf8; /* cyan   */
+  --h3: #f472b6; /* pink   */
+  --h4: #34d399; /* mint   */
+  --h5: #fb923c; /* amber  */
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height:100vh;
+}
+
+/* ── HOLO BACKGROUND BLOBS ── */
+.bg-blobs {
+  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+}
+.blob {
+  position:absolute; border-radius:50%; filter:blur(100px); opacity:0.18;
+  animation: blob-drift 16s ease-in-out infinite alternate;
+}
+.blob1 { width:700px;height:700px; top:-200px; left:-150px; background:radial-gradient(circle,#7c3aed,transparent 70%); animation-duration:18s; }
+.blob2 { width:500px;height:500px; top:30%; right:-100px; background:radial-gradient(circle,#0ea5e9,transparent 70%); animation-duration:14s; animation-delay:2s; }
+.blob3 { width:600px;height:600px; bottom:-150px; left:25%; background:radial-gradient(circle,#ec4899,transparent 70%); animation-duration:20s; animation-delay:4s; }
+.blob4 { width:400px;height:400px; top:60%; left:10%; background:radial-gradient(circle,#10b981,transparent 70%); animation-duration:12s; animation-delay:1s; }
+@keyframes blob-drift {
+  0%   { transform:translate(0,0) scale(1); }
+  33%  { transform:translate(40px,-30px) scale(1.08); }
+  66%  { transform:translate(-20px,50px) scale(0.94); }
+  100% { transform:translate(30px,20px) scale(1.05); }
+}
+
+/* ── NOISE GRAIN ── */
+body::after {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.35;
+}
+
+.wrap { position:relative; z-index:1; max-width:1240px; margin:0 auto; padding:0 2rem; }
+
+/* ── HOLO TEXT GRADIENT ── */
+.holo {
+  background: linear-gradient(135deg, var(--h1) 0%, var(--h2) 30%, var(--h3) 55%, var(--h4) 80%, var(--h5) 100%);
+  background-size:200% 200%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation: holo-shift 6s ease infinite;
+}
+@keyframes holo-shift {
+  0%  { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100%{ background-position:0% 50%; }
+}
+
+/* ── GLASS CARD ── */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  position:relative; overflow:hidden;
+}
+.glass::before {
+  content:''; position:absolute; inset:0; border-radius:inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(255,255,255,0.02) 100%);
+  pointer-events:none;
+}
+.glass:hover { border-color: var(--border2); }
+
+/* ── NAV ── */
+nav {
+  position:sticky; top:0; z-index:100;
+  background: rgba(7,8,15,0.75);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width:1240px; margin:0 auto; padding:0 2rem;
+  height:64px; display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo {
+  font-family:'Outfit', sans-serif;
+  font-weight:800; font-size:1.25rem; letter-spacing:-0.02em;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.logo-gem {
+  width:28px; height:28px; border-radius:8px;
+  background: linear-gradient(135deg, var(--h1), var(--h2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.75rem; color:#fff;
+  box-shadow: 0 0 16px rgba(167,139,250,0.5);
+}
+.nav-right { display:flex; align-items:center; gap:0.8rem; }
+.nav-pill {
+  font-size:0.7rem; font-weight:500; letter-spacing:0.06em;
+  padding:0.3rem 0.9rem; border-radius:100px;
+  border:1px solid var(--border); color:var(--text2);
+  background:var(--glass);
+}
+.hackster-btn {
+  font-size:0.75rem; font-weight:600; letter-spacing:0.04em;
+  padding:0.45rem 1.2rem; border-radius:100px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(56,189,248,0.15));
+  border:1px solid rgba(167,139,250,0.4);
+  color: var(--h1); text-decoration:none;
+  display:inline-flex; align-items:center; gap:0.4rem;
+  transition:all 0.25s;
+  box-shadow: 0 0 20px rgba(167,139,250,0.1);
+}
+.hackster-btn:hover {
+  background: linear-gradient(135deg, rgba(167,139,250,0.35), rgba(56,189,248,0.25));
+  border-color: rgba(167,139,250,0.7);
+  box-shadow: 0 0 30px rgba(167,139,250,0.25);
+  color:#fff;
+}
+
+/* ── HERO ── */
+.hero {
+  display:grid; grid-template-columns:1fr 1fr; gap:4rem;
+  align-items:center; padding:6rem 0 5rem;
+}
+.hero-kicker {
+  font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase;
+  font-weight:600; margin-bottom:1.4rem;
+  display:inline-flex; align-items:center; gap:0.6rem;
+  padding:0.35rem 1rem; border-radius:100px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(56,189,248,0.08));
+  border:1px solid rgba(167,139,250,0.25);
+  color:var(--h1);
+}
+.hero h1 {
+  font-size:clamp(2.6rem,4.5vw,4.4rem);
+  font-weight:800; line-height:1.05;
+  letter-spacing:-0.04em; margin-bottom:1.5rem;
+}
+.hero-sub {
+  font-size:1rem; color:var(--text2); font-weight:300;
+  line-height:1.8; max-width:480px; margin-bottom:2rem;
+}
+.hero-chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem; }
+.chip {
+  font-size:0.72rem; font-weight:500;
+  padding:0.3rem 0.85rem; border-radius:100px;
+  border:1px solid var(--border); color:var(--text2);
+  background:var(--glass);
+  display:inline-flex; align-items:center; gap:0.35rem;
+  transition:all 0.2s;
+}
+.chip:hover { border-color:var(--border2); color:var(--text); background:var(--glass2); }
+.chip i { font-size:0.62rem; }
+.hero-btns { display:flex; gap:0.8rem; flex-wrap:wrap; }
+
+.btn-holo {
+  font-family:'Outfit',sans-serif;
+  font-size:0.82rem; font-weight:600; letter-spacing:0.04em;
+  padding:0.75rem 2rem; border-radius:100px; border:none;
+  background: linear-gradient(135deg, var(--h1), var(--h2), var(--h3));
+  background-size:200% 200%; animation:holo-shift 4s ease infinite;
+  color:#fff; cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:0.5rem;
+  box-shadow: 0 4px 30px rgba(167,139,250,0.35);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.btn-holo:hover { transform:translateY(-2px); box-shadow:0 8px 40px rgba(167,139,250,0.5); }
+.btn-ghost {
+  font-family:'Outfit',sans-serif;
+  font-size:0.82rem; font-weight:500; letter-spacing:0.03em;
+  padding:0.75rem 1.8rem; border-radius:100px;
+  background:var(--glass); border:1px solid var(--border2);
+  color:var(--text2); cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:0.5rem;
+  transition:all 0.2s; backdrop-filter:blur(8px);
+}
+.btn-ghost:hover { color:var(--text); border-color:rgba(167,139,250,0.5); background:var(--glass2); }
+
+/* ── CIRCUIT BOARD HERO VISUAL ── */
+.circuit-wrap {
+  position:relative; width:100%; max-width:440px;
+  margin-left:auto;
+}
+.circuit-board {
+  width:100%; aspect-ratio:1;
+  position:relative;
+}
+#circuitCanvas { width:100%; height:100%; border-radius:20px; }
+
+/* ── STATS ── */
+.stats {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:16px; overflow:hidden;
+  margin:0 0 4rem;
+}
+.stat {
+  background:var(--bg2); padding:1.8rem 1.2rem;
+  transition:background 0.2s; position:relative; overflow:hidden;
+}
+.stat:hover { background:var(--bg3); }
+.stat-num {
+  font-size:2.2rem; font-weight:800; letter-spacing:-0.03em; line-height:1;
+  margin-bottom:0.4rem;
+}
+.stat-lbl { font-size:0.72rem; color:var(--text3); letter-spacing:0.08em; text-transform:uppercase; font-weight:400; }
+
+/* ── SECTION ── */
+.section { padding:4rem 0; }
+.sec-tag {
+  font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase;
+  font-weight:600; color:var(--text3); margin-bottom:0.6rem;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.sec-tag::before { content:''; display:inline-block; width:20px; height:1px; background:var(--text3); }
+.sec-h {
+  font-size:clamp(1.8rem,3vw,2.6rem); font-weight:800;
+  letter-spacing:-0.03em; line-height:1.15; margin-bottom:0.5rem;
+}
+
+/* ── HOW IT WORKS ── */
+.hiw-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; margin-top:3rem; }
+.story-p { font-size:0.93rem; color:var(--text2); font-weight:300; line-height:1.85; margin-bottom:1rem; }
+.glass-quote {
+  padding:1.2rem 1.4rem; border-radius:14px; margin:1.2rem 0;
+  font-family:'DM Mono', monospace; font-size:0.78rem; color:var(--text2);
+  line-height:1.8;
+  background:var(--glass);
+  border:1px solid var(--border);
+}
+.glass-quote .ql {
+  font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
+  margin-bottom:0.5rem; display:block;
+}
+.flow { display:flex; flex-direction:column; }
+.fstep {
+  display:flex; gap:1.2rem; padding:1.2rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  align-items:flex-start;
+}
+.fstep:last-child { border:none; }
+.fnum {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.78rem; font-weight:700;
+  border:1px solid var(--border);
+  background:var(--glass);
+}
+.fstep:nth-child(1) .fnum { color:var(--h1); border-color:rgba(167,139,250,0.3); }
+.fstep:nth-child(2) .fnum { color:var(--h2); border-color:rgba(56,189,248,0.3); }
+.fstep:nth-child(3) .fnum { color:var(--h3); border-color:rgba(244,114,182,0.3); }
+.fstep:nth-child(4) .fnum { color:var(--h4); border-color:rgba(52,211,153,0.3); }
+.fstep:nth-child(5) .fnum { color:var(--h5); border-color:rgba(251,146,60,0.3); }
+.fbody h4 { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:0.3rem; }
+.fbody p  { font-size:0.8rem; color:var(--text3); line-height:1.6; }
+
+/* ── COMPONENTS ── */
+.comp-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:1rem; margin-top:2.5rem;
+}
+.comp-card {
+  padding:1.5rem 1.2rem; border-radius:16px; transition:all 0.25s;
+  cursor:default;
+}
+.comp-card:hover { transform:translateY(-4px); border-color:var(--border2); background:var(--glass2); }
+.comp-ico {
+  width:42px; height:42px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; margin-bottom:1rem;
+  border:1px solid var(--border);
+}
+.ci1 { background:rgba(167,139,250,0.1); color:var(--h1); border-color:rgba(167,139,250,0.25); }
+.ci2 { background:rgba(56,189,248,0.1);  color:var(--h2); border-color:rgba(56,189,248,0.25); }
+.ci3 { background:rgba(244,114,182,0.1); color:var(--h3); border-color:rgba(244,114,182,0.25); }
+.ci4 { background:rgba(52,211,153,0.1);  color:var(--h4); border-color:rgba(52,211,153,0.25); }
+.ci5 { background:rgba(251,146,60,0.1);  color:var(--h5); border-color:rgba(251,146,60,0.25); }
+.ci6 { background:rgba(167,139,250,0.08);color:var(--h1); border-color:rgba(167,139,250,0.2); }
+.comp-card h3 { font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:0.35rem; }
+.comp-card p  { font-size:0.76rem; color:var(--text3); line-height:1.55; }
+
+/* ── DEMO ── */
+.demo-shell {
+  border-radius:20px; overflow:hidden; margin-top:2.5rem;
+  border:1px solid var(--border);
+  background: rgba(7,8,15,0.6);
+  backdrop-filter:blur(24px);
+}
+.demo-topbar {
+  padding:1rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;
+  border-bottom:1px solid var(--border);
+  background:var(--glass);
+}
+.demo-topbar-l { display:flex; align-items:center; gap:10px; }
+.live-pill {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.7rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+  padding:0.3rem 0.9rem; border-radius:100px;
+  background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:var(--h4);
+}
+.live-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--h4); box-shadow:0 0 6px var(--h4);
+  animation:live-blink 1.3s ease-in-out infinite alternate;
+}
+@keyframes live-blink { from{opacity:0.3;} to{opacity:1;} }
+.demo-title-t { font-size:0.88rem; font-weight:600; color:var(--text); }
+.demo-body { padding:2rem; }
+
+/* LCD */
+.lcd {
+  background:#030508;
+  border:1px solid rgba(167,139,250,0.2);
+  border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:2rem;
+  font-family:'DM Mono', monospace; position:relative;
+  box-shadow: 0 0 40px rgba(167,139,250,0.06), inset 0 0 30px rgba(0,0,0,0.5);
+}
+.lcd::before {
+  content:'I²C LCD — 20×4';
+  position:absolute; top:-10px; left:14px;
+  font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase;
+  background:var(--bg); padding:0 8px; color:var(--text3);
+}
+.lcd-row {
+  font-size:0.82rem; line-height:2.1; letter-spacing:0.06em;
+  position:relative; z-index:1;
+}
+.lcd-row.r1 { color:#a78bfa; text-shadow:0 0 10px rgba(167,139,250,0.6); }
+.lcd-row.r2 { color:#38bdf8; text-shadow:0 0 10px rgba(56,189,248,0.5); }
+.lcd-row.r3 { color:#f472b6; text-shadow:0 0 10px rgba(244,114,182,0.5); }
+.lcd-row.r4 { color:#34d399; text-shadow:0 0 10px rgba(52,211,153,0.5); }
+.lcd-dim { opacity:0.35; }
+
+/* DEMO LAYOUT */
+.demo-controls { display:grid; grid-template-columns:90px 1fr; gap:2rem; align-items:start; }
+.coin-col { display:flex; flex-direction:column; align-items:center; gap:0.8rem; }
+.coin-slot {
+  width:76px; height:110px; border-radius:14px;
+  background:var(--glass); border:1px solid var(--border2);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.6rem; cursor:pointer; position:relative; overflow:hidden;
+  transition:all 0.25s;
+}
+.coin-slot:hover {
+  border-color:rgba(167,139,250,0.6);
+  box-shadow: 0 0 24px rgba(167,139,250,0.2);
+  background:var(--glass2);
+}
+.coin-slot::before {
+  content:''; position:absolute; inset:0; border-radius:inherit;
+  background:linear-gradient(135deg, rgba(167,139,250,0.08), rgba(56,189,248,0.05));
+}
+.slot-slit {
+  width:32px; height:4px; background:rgba(255,255,255,0.08);
+  border-radius:2px; border:1px solid var(--border2); position:relative; z-index:1;
+}
+.coin-slot i { font-size:1rem; color:var(--h1); position:relative; z-index:1; }
+.slot-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); position:relative; z-index:1; font-weight:500; }
+.c-anim {
+  position:absolute; width:14px; height:14px; border-radius:50%;
+  background:conic-gradient(var(--h1),var(--h2),var(--h3),var(--h1));
+  box-shadow:0 0 10px rgba(167,139,250,0.8); top:-20px; left:50%; transform:translateX(-50%); opacity:0;
+}
+.c-anim.drop { animation:cdrop 0.45s ease-in forwards; }
+@keyframes cdrop { 0%{top:-20px;opacity:1;} 100%{top:60%;opacity:0;} }
+
+.coin-num { font-size:2rem; font-weight:800; letter-spacing:-0.03em; }
+.coin-lbl { font-size:0.62rem; color:var(--text3); letter-spacing:0.1em; text-transform:uppercase; }
+
+/* STATIONS */
+.ports { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+.port {
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:14px; padding:1rem; transition:all 0.3s;
+  position:relative; overflow:hidden;
+}
+.port.active { border-color:rgba(167,139,250,0.4); background:rgba(167,139,250,0.05); }
+.port.active::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--h1), var(--h2), var(--h3), var(--h4));
+  background-size:200% 100%; animation:holo-shift 2s linear infinite;
+}
+.port-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; }
+.port-id { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text2); }
+.port-badge {
+  font-size:0.58rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+  padding:0.18rem 0.55rem; border-radius:100px; border:1px solid;
+}
+.b-idle     { color:var(--text3); border-color:rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); }
+.b-charging { color:var(--h4);   border-color:rgba(52,211,153,0.35);  background:rgba(52,211,153,0.08); }
+.port-timer {
+  font-family:'DM Mono', monospace; font-size:1.6rem; font-weight:500;
+  letter-spacing:0.05em; color:var(--text2); margin:0.2rem 0;
+  transition:color 0.3s;
+}
+.port-timer.live { color:var(--h2); text-shadow:0 0 14px rgba(56,189,248,0.4); }
+.port-bar { height:2px; background:rgba(255,255,255,0.06); border-radius:1px; overflow:hidden; margin-bottom:0.75rem; }
+.port-fill {
+  height:100%; border-radius:1px;
+  background:linear-gradient(90deg, var(--h1), var(--h2), var(--h3));
+  background-size:200% 100%; animation:holo-shift 3s linear infinite;
+  transition:width 0.2s linear;
+}
+.port-btn {
+  width:100%; padding:0.5rem;
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:8px; color:var(--text2);
+  font-family:'Outfit',sans-serif; font-size:0.74rem; font-weight:500;
+  cursor:pointer; transition:all 0.2s;
+}
+.port-btn:hover:not(:disabled) {
+  background:rgba(167,139,250,0.12);
+  border-color:rgba(167,139,250,0.4); color:var(--h1);
+}
+.port-btn:disabled { opacity:0.28; cursor:not-allowed; }
+
+.demo-console {
+  padding:0.8rem 1.5rem;
+  border-top:1px solid var(--border);
+  font-family:'DM Mono', monospace; font-size:0.72rem; color:var(--text3);
+  display:flex; align-items:center; gap:0.6rem;
+  background:var(--glass);
+}
+.demo-console i { color:var(--h1); }
+
+/* ── CODE ── */
+pre {
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--border);
+  border-left:2px solid;
+  border-image: linear-gradient(180deg, var(--h1), var(--h2), var(--h3)) 1;
+  border-radius:14px; border-top-left-radius:0; border-bottom-left-radius:0;
+  padding:1.6rem;
+  overflow-x:auto;
+  font-family:'DM Mono', monospace;
+  font-size:0.76rem; color:#b0b8d8; line-height:1.8;
+  margin-top:2rem;
+}
+.ck { color:var(--h1); } .cf { color:var(--h2); }
+.cs { color:var(--h4); } .cc { color:var(--text3); font-style:italic; }
+
+/* ── FOOTER ── */
+footer { border-top:1px solid var(--border); padding:2.5rem 0 2rem; margin-top:2rem; }
+.foot-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; }
+.foot-brand { font-size:1.1rem; font-weight:800; letter-spacing:-0.02em; }
+.foot-links { display:flex; gap:1.8rem; flex-wrap:wrap; }
+.foot-link { font-size:0.8rem; color:var(--text3); text-decoration:none; display:flex; align-items:center; gap:0.4rem; transition:color 0.2s; }
+.foot-link:hover { color:var(--text); }
+.foot-copy { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--text3); opacity:0.4; margin-top:1.5rem; text-align:center; }
+
+/* RESPONSIVE */
+@media(max-width:880px) {
+  .hero { grid-template-columns:1fr; }
+  .circuit-wrap { max-width:320px; margin:0 auto; }
+  .hiw-grid { grid-template-columns:1fr; gap:2rem; }
+  .stats { grid-template-columns:repeat(2,1fr); }
+  .demo-controls { grid-template-columns:1fr; }
+  .coin-col { flex-direction:row; align-items:center; gap:1.5rem; }
+}
+@media(max-width:540px) { .wrap{padding:0 1rem;} .ports{grid-template-columns:1fr 1fr;} }
+
+/* FADE IN */
+.fi { opacity:0; transform:translateY(18px); animation:fi 0.6s ease forwards; }
+@keyframes fi { to{opacity:1;transform:translateY(0);} }
+.d1{animation-delay:.1s}.d2{animation-delay:.22s}.d3{animation-delay:.34s}.d4{animation-delay:.46s}
+</style>
 </head>
-
 <body>
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+</div>
 
-    <!-- NAV -->
-    <nav>
-        <div class="nav-inner">
-            <div class="nav-logo">E‑Piso <span>/ Smart Charger</span></div>
-            <div class="nav-right">
-                <span class="nav-pill">Beginner · IoT</span>
-                <a class="hackster-btn" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
-                    target="_blank">
-                    <i class="fas fa-external-link-alt"></i> Hackster.io
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- HERO -->
-    <div class="wrap">
-        <section class="hero">
-            <div class="hero-left fade-up d1">
-                <div class="hero-eyebrow">Coin-Based Automation · Arduino</div>
-                <h1>Smart <em>Coin-Based</em><br>Mobile Charging<br>System</h1>
-                <p class="hero-sub">Insert a coin, plug in your phone. A public charging station that allocates precise
-                    charging
-                    time per coin — smart, tamper-resistant, and scalable.</p>
-                <div class="hero-actions">
-                    <a class="btn-gold" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
-                        target="_blank">
-                        <i class="fas fa-book-open"></i> Full Build Guide
-                    </a>
-                    <a class="btn-outline" href="#demo">
-                        <i class="fas fa-play-circle"></i> Live Demo
-                    </a>
-                </div>
-            </div>
-            <div class="coin-visual fade-up d2">
-                <div class="coin-ring r1"></div>
-                <div class="coin-ring r2"></div>
-                <div class="coin-ring r3"></div>
-                <div class="orbit-dot"></div>
-                <div class="orbit-dot d2"></div>
-                <div class="coin-center"><i class="fas fa-coins"></i></div>
-            </div>
-        </section>
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="logo-gem"><i class="fas fa-coins"></i></div>
+      <span class="holo">CoinCharge</span>
     </div>
-
-    <div class="divider"></div>
-
-    <!-- STATS BAR -->
-    <div class="wrap">
-        <div class="stats-bar fade-up d1">
-            <div class="stat-item">
-                <div class="stat-num">2</div>
-                <div class="stat-label">Minutes per coin</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num">4</div>
-                <div class="stat-label">Charging stations</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num">5V</div>
-                <div class="stat-label">USB output rail</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num">∞</div>
-                <div class="stat-label">Coins stackable</div>
-            </div>
-        </div>
+    <div class="nav-right">
+      <span class="nav-pill">ATmega328 · I²C · 4-Port</span>
+      <a class="hackster-btn" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938" target="_blank">
+        <i class="fas fa-external-link-alt"></i> Hackster.io
+      </a>
     </div>
+  </div>
+</nav>
 
-    <div class="divider"></div>
-
-    <!-- STORY -->
-    <div class="wrap">
-        <section class="section">
-            <div class="sec-eyebrow">Project overview</div>
-            <div class="sec-title">The <em>Problem</em> & Solution</div>
-            <div class="story-grid">
-                <div class="story-text fade-up d1">
-                    <p>Public charging stations are often free, vandalism-prone, and costly to maintain. E-Piso solves
-                        this by
-                        gating charging access behind a coin mechanism — a proven, low-tech barrier that requires zero
-                        connectivity
-                        or accounts.</p>
-                    <div class="story-highlight">
-                        "Insert a valid coin → phone charges for 2 minutes. Insert more coins → time stacks up. Simple,
-                        physical,
-                        reliable."
-                    </div>
-                    <p>The system is built around an ATmega328 microcontroller that monitors a multi-coin sensor,
-                        controls relay
-                        switches for up to 4 charging ports, and displays remaining time on a 20×4 I²C LCD display.</p>
-                </div>
-                <div class="fade-up d2">
-                    <div class="flow">
-                        <div class="flow-step">
-                            <div class="flow-num">01</div>
-                            <div class="flow-body">
-                                <h4>Coin Detection</h4>
-                                <p>Multi-coin sensor validates the coin type and sends a digital pulse to the
-                                    microcontroller.</p>
-                            </div>
-                        </div>
-                        <div class="flow-step">
-                            <div class="flow-num">02</div>
-                            <div class="flow-body">
-                                <h4>Time Allocation</h4>
-                                <p>Each valid coin adds 2 minutes to the charging credit. Credits stack indefinitely
-                                    before a port is
-                                    selected.</p>
-                            </div>
-                        </div>
-                        <div class="flow-step">
-                            <div class="flow-num">03</div>
-                            <div class="flow-body">
-                                <h4>Port Selection</h4>
-                                <p>User presses one of 4 buttons to assign the credit to a specific charging port. Relay
-                                    activates.</p>
-                            </div>
-                        </div>
-                        <div class="flow-step">
-                            <div class="flow-num">04</div>
-                            <div class="flow-body">
-                                <h4>Countdown & Auto-cutoff</h4>
-                                <p>LCD shows reverse countdown. When time reaches 00:00, relay opens and charging stops
-                                    automatically.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flow-step">
-                            <div class="flow-num">05</div>
-                            <div class="flow-body">
-                                <h4>Top-Up Anytime</h4>
-                                <p>Insert more coins during an active session — time is added to the remaining balance
-                                    in real-time.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- HARDWARE -->
-    <div class="wrap">
-        <section class="section">
-            <div class="sec-eyebrow">Bill of materials</div>
-            <div class="sec-title">Hardware <em>Components</em></div>
-            <div class="hw-grid fade-up d1">
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-microchip"></i></div>
-                    <h3>ATmega328</h3>
-                    <p>Core microcontroller · 32KB flash · 14 digital I/O · hardware UART/I²C</p>
-                </div>
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-coins"></i></div>
-                    <h3>Multi Coin Sensor</h3>
-                    <p>Accepts multiple coin denominations · outputs pulse signal per valid coin</p>
-                </div>
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-plug"></i></div>
-                    <h3>Relay Module × 4</h3>
-                    <p>5V relay per port · controls 5V USB power rail · NC/NO switching</p>
-                </div>
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-display"></i></div>
-                    <h3>LCD 20×4 I²C</h3>
-                    <p>Displays station status · coin count · real-time countdown per port</p>
-                </div>
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-bolt"></i></div>
-                    <h3>Transformer Class II</h3>
-                    <p>Low voltage · isolated supply · safe for public installation</p>
-                </div>
-                <div class="hw-tile">
-                    <div class="hw-tile-icon"><i class="fas fa-volume-up"></i></div>
-                    <h3>Buzzer</h3>
-                    <p>Audible confirmation on coin insert · 100ms beep via tone() call</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- LIVE DEMO -->
-    <div class="wrap" id="demo">
-        <section class="section">
-            <div class="sec-eyebrow">Interactive simulation</div>
-            <div class="sec-title"><em>Live</em> Demo</div>
-            <div class="demo-wrap fade-up d1">
-                <div class="demo-topbar">
-                    <div class="demo-topbar-left">
-                        <div class="pulse-dot"></div>
-                        <span class="demo-title">E-Piso Charger — Simulation Panel</span>
-                    </div>
-                    <span style="font-size:0.72rem; color:var(--cream3); font-family:'DM Mono',monospace;">ATmega328 ·
-                        I²C LCD ·
-                        4-Port</span>
-                </div>
-                <div class="demo-body">
-                    <p class="demo-desc">Click the coin slot to insert coins. Then press START on any station to begin
-                        charging.
-                        Watch the countdown tick in real time.</p>
-
-                    <!-- LCD -->
-                    <div class="lcd-screen">
-                        <div class="lcd-row" id="lcd1">E-Piso Charger&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-                        <div class="lcd-row" id="lcd2">2 mins/PHP&nbsp;&nbsp;&nbsp;<span id="lcd-coins">C: 0</span>
-                        </div>
-                        <div class="lcd-row" id="lcd3">1|<span id="t1">00:00</span>&nbsp;&nbsp;&nbsp;2|<span
-                                id="t2">00:00</span>
-                        </div>
-                        <div class="lcd-row" id="lcd4">3|<span id="t3">00:00</span>&nbsp;&nbsp;&nbsp;4|<span
-                                id="t4">00:00</span>
-                        </div>
-                    </div>
-
-                    <div class="demo-controls">
-                        <!-- Coin insert -->
-                        <div class="coin-insert-area">
-                            <div class="coin-slot" id="coinSlot" onclick="insertCoin()">
-                                <div class="coin-slot-slit"></div>
-                                <div class="coin-animate" id="coinAnim"></div>
-                                <i class="fas fa-coins" style="color:var(--gold); font-size:1.1rem;"></i>
-                                <label>Insert Coin</label>
-                            </div>
-                            <div class="coin-count-badge" id="coinBadge">0</div>
-                            <div class="coin-label">coins ready</div>
-                        </div>
-
-                        <!-- Stations -->
-                        <div class="stations-grid" id="stationsGrid">
-                            <!-- generated by JS -->
-                        </div>
-                    </div>
-                </div>
-                <div class="demo-footer">
-                    <i class="fas fa-terminal" style="color:var(--gold);"></i>
-                    <span id="consoleMsg">&gt;_ System ready. Insert coins then press START on any port.</span>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- CODE -->
-    <div class="wrap">
-        <section class="section">
-            <div class="sec-eyebrow">Embedded firmware</div>
-            <div class="sec-title">Arduino <em>Code</em></div>
-            <p style="font-size:0.88rem; color:var(--cream3); font-weight:300; margin-top:0.5rem;">Core loop handling
-                coin
-                detection, relay switching, and LCD countdown. Full source on Hackster.io.</p>
-            <pre><code><span class="code-kw">#include</span> <span class="code-str">&lt;Wire.h&gt;</span>
-<span class="code-kw">#include</span> <span class="code-str">&lt;LiquidCrystal_I2C.h&gt;</span>
-
-LiquidCrystal_I2C lcd(<span class="code-num">0x27</span>, <span class="code-num">20</span>, <span class="code-num">4</span>);
-
-<span class="code-kw">const int</span> relayPins[<span class="code-num">4</span>]  = { <span class="code-num">2</span>, <span class="code-num">3</span>, <span class="code-num">4</span>, <span class="code-num">5</span> };
-<span class="code-kw">const int</span> buttonPins[<span class="code-num">4</span>] = { <span class="code-num">6</span>, <span class="code-num">7</span>, <span class="code-num">8</span>, <span class="code-num">9</span> };
-<span class="code-kw">const int</span> coinSlotPin   = <span class="code-num">11</span>;
-<span class="code-kw">const unsigned long</span> chargeTimePerCoin = <span class="code-num">120</span>; <span class="code-cmt">// 2 min in seconds</span>
-
-<span class="code-kw">void</span> <span class="code-fn">loop</span>() {
-  <span class="code-cmt">// Coin detection with debounce</span>
-  <span class="code-kw">if</span> (digitalRead(coinSlotPin) == LOW) {
-    delay(<span class="code-num">50</span>);
-    <span class="code-kw">if</span> (digitalRead(coinSlotPin) == LOW) {
-      coinsInserted++;
-      tone(buzzerPin, <span class="code-num">1000</span>, <span class="code-num">100</span>); <span class="code-cmt">// beep!</span>
-    }
-  }
-  <span class="code-cmt">// Button → start charging on selected port</span>
-  <span class="code-kw">for</span> (<span class="code-kw">int</span> i = <span class="code-num">0</span>; i &lt; <span class="code-num">4</span>; i++) {
-    <span class="code-kw">if</span> (digitalRead(buttonPins[i]) == LOW &amp;&amp; coinsInserted &gt; <span class="code-num">0</span>) {
-      <span class="code-fn">startCharging</span>(i);
-    }
-  }
-  <span class="code-cmt">// Auto-cutoff when time expires</span>
-  <span class="code-kw">for</span> (<span class="code-kw">int</span> i = <span class="code-num">0</span>; i &lt; <span class="code-num">4</span>; i++) {
-    <span class="code-kw">if</span> (relayEndTimes[i] &gt; <span class="code-num">0</span> &amp;&amp; millis() &gt;= relayEndTimes[i])
-      <span class="code-fn">stopCharging</span>(i);
-  }
-  <span class="code-fn">updateLCD</span>();
-}</code></pre>
-        </section>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- FOOTER -->
-    <div class="wrap">
-        <footer>
-            <div class="footer-inner">
-                <div class="footer-brand">E‑Piso ✦</div>
-                <div class="footer-links">
-                    <a class="footer-link" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938"
-                        target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Full article on Hackster.io
-                    </a>
-                    <a class="footer-link" href="https://www.hackster.io/vsatish2k4" target="_blank">
-                        <i class="fas fa-user"></i> LEOSAT on Hackster
-                    </a>
-                </div>
-            </div>
-            <p class="footer-copy">Smart Coin-Based Mobile Charging System · Open Source Hardware · MIT License · © 2025
-                LEOSAT</p>
-        </footer>
-    </div>
-
-    <script>
-        // ── DEMO STATE ──
-        let coins = 0;
-        const CHARGE_PER_COIN = 120; // seconds
-        const stations = [
-            { id: 1, remaining: 0, total: 0, interval: null },
-            { id: 2, remaining: 0, total: 0, interval: null },
-            { id: 3, remaining: 0, total: 0, interval: null },
-            { id: 4, remaining: 0, total: 0, interval: null },
-        ];
-
-        function fmtTime(s) {
-            const m = Math.floor(s / 60), sec = s % 60;
-            return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-        }
-
-        function setConsole(msg) {
-            document.getElementById('consoleMsg').textContent = '>_ ' + msg;
-        }
-
-        function updateLCD() {
-            document.getElementById('lcd-coins').textContent = 'C: ' + coins;
-            const ids = ['t1', 't2', 't3', 't4'];
-            stations.forEach((st, i) => {
-                document.getElementById(ids[i]).textContent = fmtTime(st.remaining);
-            });
-        }
-
-        function renderStations() {
-            const grid = document.getElementById('stationsGrid');
-            grid.innerHTML = '';
-            stations.forEach((st, i) => {
-                const active = st.remaining > 0;
-                const pct = st.total > 0 ? (st.remaining / st.total * 100).toFixed(1) : 0;
-                const div = document.createElement('div');
-                div.className = 'station' + (active ? ' active' : '');
-                div.innerHTML = `
-      <div class="station-header">
-        <span class="station-id">PORT ${st.id}</span>
-        <span class="station-status ${active ? 'status-charging' : 'status-idle'}">${active ? 'Charging' : 'Idle'}</span>
+<!-- HERO -->
+<div class="wrap">
+  <section class="hero">
+    <div class="fi d1">
+      <div class="hero-kicker"><i class="fas fa-bolt"></i> ECE Project · Coin-Based Automation</div>
+      <h1>Smart <span class="holo">Coin-Based</span><br>Mobile Charging<br>System</h1>
+      <p class="hero-sub">Insert a coin, plug in your phone. The ATmega328 allocates precise charging time per coin — perfect for public charging stations, canteens, and transport hubs.</p>
+      <div class="hero-chips">
+        <span class="chip"><i class="fas fa-microchip"></i> ATmega328</span>
+        <span class="chip"><i class="fas fa-coins"></i> Multi-Coin Sensor</span>
+        <span class="chip"><i class="fas fa-toggle-on"></i> 4× Relay</span>
+        <span class="chip"><i class="fas fa-display"></i> I²C LCD 20×4</span>
+        <span class="chip"><i class="fas fa-bolt"></i> 5V USB Out</span>
       </div>
-      <div class="station-timer ${active ? 'active' : ''}">${fmtTime(st.remaining)}</div>
-      <div class="station-bar"><div class="station-bar-fill" style="width:${pct}%"></div></div>
-      <button class="start-btn" onclick="startStation(${i})" ${(coins === 0 || active) ? 'disabled' : ''}>
-        ${active ? '<i class="fas fa-bolt"></i> Charging...' : '<i class="fas fa-play"></i> START — ' + coins + ' coin' + (coins !== 1 ? 's' : '')}
+      <div class="hero-btns">
+        <a class="btn-holo" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938" target="_blank">
+          <i class="fas fa-book-open"></i> Full Build Guide
+        </a>
+        <a class="btn-ghost" href="#demo"><i class="fas fa-play-circle"></i> Live Demo</a>
+      </div>
+    </div>
+    <!-- CIRCUIT BOARD VISUAL -->
+    <div class="circuit-wrap fi d2">
+      <div class="circuit-board">
+        <canvas id="circuitCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats fi d1">
+    <div class="stat"><div class="stat-num holo">2</div><div class="stat-lbl">Minutes / Coin</div></div>
+    <div class="stat"><div class="stat-num holo">4</div><div class="stat-lbl">Charging Ports</div></div>
+    <div class="stat"><div class="stat-num holo">5V</div><div class="stat-lbl">USB Output</div></div>
+    <div class="stat"><div class="stat-num holo">∞</div><div class="stat-lbl">Coins Stackable</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="wrap">
+  <section class="section">
+    <div class="sec-tag fi d1">System Architecture</div>
+    <div class="sec-h fi d1">How the <span class="holo">Circuit</span> Works</div>
+    <div class="hiw-grid">
+      <div class="fi d2">
+        <p class="story-p">A multi-coin sensor detects valid coins and pulses the ATmega328 on digital pin 11. Each valid coin increments the credit counter and triggers a buzzer beep for user feedback.</p>
+        <div class="glass-quote glass">
+          <span class="ql holo">// Signal Flow</span>
+          COIN_IN → digitalRead(11) == LOW<br>
+          → coinsInserted++ → tone(BUZZER)<br>
+          → relayEndTime += 120s per coin
+        </div>
+        <p class="story-p">When a port button is pressed, the assigned relay closes, powering the USB socket. The MCU counts down in real-time on the LCD. At 00:00, the relay opens and charging stops automatically.</p>
+        <div class="glass-quote glass">
+          <span class="ql holo">// Auto Cutoff</span>
+          millis() >= relayEndTime[i]<br>
+          → digitalWrite(RELAY[i], LOW)<br>
+          → Port OFF · LCD cleared
+        </div>
+      </div>
+      <div class="fi d3">
+        <div class="flow">
+          <div class="fstep"><div class="fnum">01</div><div class="fbody"><h4>Coin Detection</h4><p>Sensor validates denomination and pulses MCU via pin 11 with debounce.</p></div></div>
+          <div class="fstep"><div class="fnum">02</div><div class="fbody"><h4>Credit Stack</h4><p>Each coin adds 120 seconds. Credits accumulate before a port is selected.</p></div></div>
+          <div class="fstep"><div class="fnum">03</div><div class="fbody"><h4>Port Selection</h4><p>User presses one of 4 buttons (pins 6–9) to assign credit to a station.</p></div></div>
+          <div class="fstep"><div class="fnum">04</div><div class="fbody"><h4>Relay Switching</h4><p>Relay closes, delivering regulated 5V to the USB charging socket.</p></div></div>
+          <div class="fstep"><div class="fnum">05</div><div class="fbody"><h4>LCD Countdown</h4><p>20×4 display shows MM:SS per port. Insert coins mid-session to top up.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- COMPONENTS -->
+<div class="wrap">
+  <section class="section">
+    <div class="sec-tag fi d1">Bill of Materials</div>
+    <div class="sec-h fi d1">Electronic <span class="holo">Components</span></div>
+    <div class="comp-grid fi d2">
+      <div class="comp-card glass"><div class="comp-ico ci1"><i class="fas fa-microchip"></i></div><h3>ATmega328</h3><p>Core MCU · 32KB flash · 14 digital I/O · I²C + UART support</p></div>
+      <div class="comp-card glass"><div class="comp-ico ci2"><i class="fas fa-coins"></i></div><h3>Multi Coin Sensor</h3><p>Validates coin type · digital pulse output per accepted coin</p></div>
+      <div class="comp-card glass"><div class="comp-ico ci3"><i class="fas fa-toggle-on"></i></div><h3>Relay Module × 4</h3><p>5V relay per port · NO/NC switching · controls USB power rail</p></div>
+      <div class="comp-card glass"><div class="comp-ico ci4"><i class="fas fa-display"></i></div><h3>LCD 20×4 I²C</h3><p>Shows coin count and real-time MM:SS countdown per port</p></div>
+      <div class="comp-card glass"><div class="comp-ico ci5"><i class="fas fa-plug"></i></div><h3>Class II Transformer</h3><p>Low voltage isolated supply · safe for public installations</p></div>
+      <div class="comp-card glass"><div class="comp-ico ci6"><i class="fas fa-volume-up"></i></div><h3>Buzzer + Buttons × 4</h3><p>Audible coin confirm · port selection via INPUT_PULLUP pins</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- DEMO -->
+<div class="wrap" id="demo">
+  <section class="section">
+    <div class="sec-tag fi d1">Interactive Simulation</div>
+    <div class="sec-h fi d1"><span class="holo">Live</span> Demo</div>
+    <div class="demo-shell fi d2">
+      <div class="demo-topbar">
+        <div class="demo-topbar-l">
+          <div class="live-pill"><div class="live-dot"></div>Live</div>
+          <span class="demo-title-t">CoinCharge — System Simulation</span>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text3);">ATmega328 · 4-PORT · I²C</span>
+      </div>
+      <div class="demo-body">
+        <!-- LCD -->
+        <div class="lcd">
+          <div class="lcd-row r1" id="l1">CoinCharge  v1.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="lcd-row r2" id="l2">2 min/coin&nbsp;&nbsp;&nbsp;&nbsp;<span id="lc">C:0</span></div>
+          <div class="lcd-row r3">P1|<span id="t1" class="lcd-dim">00:00</span>&nbsp;&nbsp;P2|<span id="t2" class="lcd-dim">00:00</span></div>
+          <div class="lcd-row r4">P3|<span id="t3" class="lcd-dim">00:00</span>&nbsp;&nbsp;P4|<span id="t4" class="lcd-dim">00:00</span></div>
+        </div>
+        <div class="demo-controls">
+          <!-- Coin -->
+          <div class="coin-col">
+            <div class="coin-slot" onclick="insertCoin()">
+              <div class="slot-slit"></div>
+              <div class="c-anim" id="canim"></div>
+              <i class="fas fa-coins"></i>
+              <span class="slot-lbl">Insert Coin</span>
+            </div>
+            <div>
+              <div class="coin-num holo" id="cNum">0</div>
+              <div class="coin-lbl">coins ready</div>
+            </div>
+          </div>
+          <!-- Ports -->
+          <div class="ports" id="ports"></div>
+        </div>
+      </div>
+      <div class="demo-console">
+        <i class="fas fa-terminal"></i>
+        <span id="clog">&gt;_ System ready. Insert coins then press START on any port.</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CODE -->
+<div class="wrap">
+  <section class="section">
+    <div class="sec-tag fi d1">Embedded Firmware</div>
+    <div class="sec-h fi d1">Arduino <span class="holo">Source Code</span></div>
+    <p style="font-size:0.88rem;color:var(--text3);margin-top:0.5rem;font-weight:300;">Core loop — coin detection, relay switching, LCD update. Full source on Hackster.io.</p>
+<pre><code><span class="ck">#include</span> <span class="cs">&lt;Wire.h&gt;</span>
+<span class="ck">#include</span> <span class="cs">&lt;LiquidCrystal_I2C.h&gt;</span>
+
+LiquidCrystal_I2C lcd(<span class="cs">0x27</span>, <span class="cs">20</span>, <span class="cs">4</span>);
+
+<span class="ck">const int</span>  relayPins[<span class="cs">4</span>]  = {<span class="cs">2,3,4,5</span>};
+<span class="ck">const int</span>  buttonPins[<span class="cs">4</span>] = {<span class="cs">6,7,8,9</span>};
+<span class="ck">const unsigned long</span> chargeTimePerCoin = <span class="cs">120</span>; <span class="cc">// 2 min/coin</span>
+
+<span class="ck">void</span> <span class="cf">loop</span>() {
+  <span class="cc">// Coin detection with debounce</span>
+  <span class="ck">if</span> (digitalRead(coinSlotPin) == LOW) {
+    delay(<span class="cs">50</span>);
+    <span class="ck">if</span> (digitalRead(coinSlotPin) == LOW) {
+      coinsInserted++;
+      tone(buzzerPin, <span class="cs">1000</span>, <span class="cs">100</span>);
+    }
+  }
+  <span class="cc">// Assign coins to a port</span>
+  <span class="ck">for</span> (<span class="ck">int</span> i=<span class="cs">0</span>; i&lt;<span class="cs">4</span>; i++) {
+    <span class="ck">if</span> (digitalRead(buttonPins[i])==LOW &amp;&amp; coinsInserted&gt;<span class="cs">0</span>)
+      <span class="cf">startCharging</span>(i);
+  }
+  <span class="cc">// Auto cutoff</span>
+  <span class="ck">for</span> (<span class="ck">int</span> i=<span class="cs">0</span>; i&lt;<span class="cs">4</span>; i++) {
+    <span class="ck">if</span> (relayEndTimes[i]&gt;<span class="cs">0</span> &amp;&amp; millis()&gt;=relayEndTimes[i])
+      <span class="cf">stopCharging</span>(i);
+  }
+  <span class="cf">updateLCD</span>();
+}</code></pre>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<div class="wrap">
+  <footer>
+    <div class="foot-inner">
+      <div class="foot-brand"><span class="holo">CoinCharge</span></div>
+      <div class="foot-links">
+        <a class="foot-link" href="https://www.hackster.io/vsatish2k4/mobile-charging-system-d4f938" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Hackster.io — Full Article
+        </a>
+        <a class="foot-link" href="https://www.hackster.io/vsatish2k4" target="_blank">
+          <i class="fas fa-user"></i> LEOSAT on Hackster
+        </a>
+      </div>
+    </div>
+    <p class="foot-copy">// Smart Coin-Based Mobile Charging System · ATmega328 · Open Source Hardware · MIT © 2025 LEOSAT</p>
+  </footer>
+</div>
+
+<script>
+// ── CIRCUIT BOARD CANVAS ──
+(function(){
+  const cv = document.getElementById('circuitCanvas');
+  const ctx = cv.getContext('2d');
+  const SIZE = 440;
+  cv.width = SIZE; cv.height = SIZE;
+  const colors = ['#a78bfa','#38bdf8','#f472b6','#34d399','#fb923c'];
+  let t = 0;
+  const nodes = [];
+  const traces = [];
+
+  // Generate grid nodes
+  for(let x=40; x<=SIZE-40; x+=55){
+    for(let y=40; y<=SIZE-40; y+=55){
+      if(Math.random()>0.25) nodes.push({
+        x, y,
+        r: Math.random()*4+2,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        pulse: Math.random()*Math.PI*2,
+        speed: Math.random()*0.04+0.01,
+        type: Math.random()>0.7 ? 'via' : Math.random()>0.5 ? 'pad' : 'dot'
+      });
+    }
+  }
+
+  // Generate traces between nearby nodes
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<80 && Math.random()>0.55){
+        traces.push({
+          a:i, b:j,
+          color:colors[Math.floor(Math.random()*colors.length)],
+          pulse:Math.random()*Math.PI*2,
+          speed:Math.random()*0.025+0.005,
+          horiz: Math.abs(dx)>Math.abs(dy)
+        });
+      }
+    }
+  }
+
+  // IC chip in center
+  const chip = { x:SIZE/2-50, y:SIZE/2-45, w:100, h:90 };
+
+  function draw(){
+    ctx.clearRect(0,0,SIZE,SIZE);
+    t+=0.02;
+
+    // Dark board bg
+    ctx.fillStyle='#070815';
+    ctx.beginPath();
+    ctx.roundRect(0,0,SIZE,SIZE,20);
+    ctx.fill();
+
+    // Subtle grid
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    ctx.lineWidth=0.5;
+    for(let x=0;x<SIZE;x+=20){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,SIZE);ctx.stroke(); }
+    for(let y=0;y<SIZE;y+=20){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(SIZE,y);ctx.stroke(); }
+
+    // Draw traces
+    traces.forEach(tr=>{
+      const na=nodes[tr.a], nb=nodes[tr.b];
+      const a=0.15+0.25*Math.sin(t*tr.speed+tr.pulse);
+      ctx.beginPath();
+      // L-shaped PCB trace
+      if(tr.horiz){
+        ctx.moveTo(na.x,na.y);
+        ctx.lineTo(nb.x,na.y);
+        ctx.lineTo(nb.x,nb.y);
+      } else {
+        ctx.moveTo(na.x,na.y);
+        ctx.lineTo(na.x,nb.y);
+        ctx.lineTo(nb.x,nb.y);
+      }
+      ctx.strokeStyle=tr.color+Math.round(a*255).toString(16).padStart(2,'0');
+      ctx.lineWidth=1.2; ctx.stroke();
+    });
+
+    // Draw nodes
+    nodes.forEach(n=>{
+      const a=0.4+0.6*Math.sin(t*n.speed+n.pulse);
+      if(n.type==='via'){
+        // Via hole
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r+2,0,Math.PI*2);
+        ctx.strokeStyle=n.color+Math.round(a*200).toString(16).padStart(2,'0');
+        ctx.lineWidth=1.5; ctx.stroke();
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*0.5,0,Math.PI*2);
+        ctx.fillStyle=n.color+Math.round(a*255).toString(16).padStart(2,'0');
+        ctx.fill();
+      } else if(n.type==='pad'){
+        // Square SMD pad
+        ctx.fillStyle=n.color+Math.round(a*120).toString(16).padStart(2,'0');
+        ctx.fillRect(n.x-n.r,n.y-n.r,n.r*2,n.r*2);
+        ctx.strokeStyle=n.color+Math.round(a*200).toString(16).padStart(2,'0');
+        ctx.lineWidth=0.8; ctx.strokeRect(n.x-n.r,n.y-n.r,n.r*2,n.r*2);
+      } else {
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fillStyle=n.color+Math.round(a*180).toString(16).padStart(2,'0');
+        ctx.fill();
+      }
+      // Glow
+      const grd=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*4);
+      grd.addColorStop(0,n.color+Math.round(a*60).toString(16).padStart(2,'0'));
+      grd.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4,0,Math.PI*2);
+      ctx.fillStyle=grd; ctx.fill();
+    });
+
+    // IC CHIP
+    const glowA = 0.3+0.3*Math.sin(t*0.8);
+    // Chip glow
+    const cg=ctx.createRadialGradient(chip.x+chip.w/2,chip.y+chip.h/2,0,chip.x+chip.w/2,chip.y+chip.h/2,90);
+    cg.addColorStop(0,`rgba(167,139,250,${glowA})`);
+    cg.addColorStop(0.4,`rgba(56,189,248,${glowA*0.4})`);
+    cg.addColorStop(1,'transparent');
+    ctx.fillStyle=cg;
+    ctx.beginPath(); ctx.arc(chip.x+chip.w/2,chip.y+chip.h/2,90,0,Math.PI*2); ctx.fill();
+
+    // Chip body
+    ctx.fillStyle='#0f1020';
+    ctx.beginPath(); ctx.roundRect(chip.x,chip.y,chip.w,chip.h,6); ctx.fill();
+    ctx.strokeStyle=`rgba(167,139,250,${0.4+0.3*Math.sin(t*0.5)})`;
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(chip.x,chip.y,chip.w,chip.h,6); ctx.stroke();
+
+    // Chip notch
+    ctx.fillStyle='#07080f';
+    ctx.beginPath(); ctx.arc(chip.x+chip.w/2,chip.y,6,Math.PI,0); ctx.fill();
+
+    // Pin rows
+    const pinColors=['#a78bfa','#38bdf8','#f472b6','#34d399','#fb923c','#a78bfa'];
+    for(let i=0;i<6;i++){
+      const py = chip.y+14+i*11;
+      const pa = 0.4+0.6*Math.abs(Math.sin(t*0.3+i*0.5));
+      // left pin
+      ctx.fillStyle=pinColors[i]+Math.round(pa*220).toString(16).padStart(2,'0');
+      ctx.fillRect(chip.x-12,py,12,5);
+      // right pin
+      ctx.fillRect(chip.x+chip.w,py,12,5);
+      // pin glow
+      if(pa>0.7){
+        ctx.shadowColor=pinColors[i]; ctx.shadowBlur=6;
+        ctx.fillRect(chip.x-12,py,12,5);
+        ctx.fillRect(chip.x+chip.w,py,12,5);
+        ctx.shadowBlur=0;
+      }
+    }
+    // Top/bottom pins
+    for(let i=0;i<4;i++){
+      const px=chip.x+15+i*20;
+      const pa=0.4+0.6*Math.abs(Math.sin(t*0.4+i*0.7));
+      ctx.fillStyle=pinColors[i]+Math.round(pa*220).toString(16).padStart(2,'0');
+      ctx.fillRect(px,chip.y-10,5,10);
+      ctx.fillRect(px,chip.y+chip.h,5,10);
+    }
+
+    // Chip text
+    ctx.fillStyle=`rgba(200,210,255,0.7)`;
+    ctx.font='bold 9px DM Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText('ATmega328',chip.x+chip.w/2, chip.y+chip.h/2-8);
+    ctx.fillStyle=`rgba(167,139,250,0.9)`;
+    ctx.font='8px DM Mono, monospace';
+    ctx.fillText('COINCHARGE', chip.x+chip.w/2, chip.y+chip.h/2+6);
+    ctx.fillStyle='rgba(150,160,200,0.45)';
+    ctx.font='7px DM Mono, monospace';
+    ctx.fillText('v1.0 · ECE', chip.x+chip.w/2, chip.y+chip.h/2+20);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── DEMO ──
+let coins=0;
+const SECS=120;
+const sts=[{id:1,rem:0,total:0,iv:null},{id:2,rem:0,total:0,iv:null},{id:3,rem:0,total:0,iv:null},{id:4,rem:0,total:0,iv:null}];
+const hc=['#a78bfa','#38bdf8','#f472b6','#34d399'];
+
+function fmt(s){ return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+function log(m){ document.getElementById('clog').textContent='>_ '+m; }
+
+function updateLCD(){
+  document.getElementById('lc').textContent='C:'+coins;
+  ['t1','t2','t3','t4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.textContent=fmt(sts[i].rem);
+    el.className=sts[i].rem>0?'':'lcd-dim';
+  });
+}
+
+function render(){
+  const g=document.getElementById('ports'); g.innerHTML='';
+  sts.forEach((st,i)=>{
+    const live=st.rem>0, pct=st.total>0?(st.rem/st.total*100).toFixed(1):0;
+    const d=document.createElement('div');
+    d.className='port'+(live?' active':'');
+    d.innerHTML=`
+      <div class="port-head">
+        <span class="port-id" style="color:${hc[i]}">PORT ${st.id}</span>
+        <span class="port-badge ${live?'b-charging':'b-idle'}">${live?'Charging':'Idle'}</span>
+      </div>
+      <div class="port-timer${live?' live':''}"> ${fmt(st.rem)}</div>
+      <div class="port-bar"><div class="port-fill" style="width:${pct}%"></div></div>
+      <button class="port-btn" onclick="startPort(${i})" ${(coins===0||live)?'disabled':''}>
+        ${live?'<i class="fas fa-bolt"></i> Active':'<i class="fas fa-play"></i> Start — '+coins+' coin'+(coins!==1?'s':'')}
       </button>`;
-                grid.appendChild(div);
-            });
-        }
+    g.appendChild(d);
+  });
+}
 
-        function insertCoin() {
-            coins++;
-            document.getElementById('coinBadge').textContent = coins;
+function insertCoin(){
+  coins++;
+  document.getElementById('cNum').textContent=coins;
+  const a=document.getElementById('canim');
+  a.classList.remove('drop'); void a.offsetWidth; a.classList.add('drop');
+  log(`Coin accepted — ${coins} coin${coins!==1?'s':''} · ${fmt(coins*SECS)} credit`);
+  updateLCD(); render();
+}
 
-            // Animate coin drop
-            const anim = document.getElementById('coinAnim');
-            anim.classList.remove('drop');
-            void anim.offsetWidth;
-            anim.classList.add('drop');
-
-            setConsole(`Coin accepted! Credit: ${coins} coin${coins !== 1 ? 's' : ''} (${fmtTime(coins * CHARGE_PER_COIN)} total)`);
-            updateLCD();
-            renderStations();
-        }
-
-        function startStation(idx) {
-            if (coins === 0 || stations[idx].remaining > 0) return;
-            const st = stations[idx];
-            const addTime = coins * CHARGE_PER_COIN;
-
-            // If already running, add time
-            if (st.interval) {
-                st.remaining += addTime;
-                st.total += addTime;
-            } else {
-                st.remaining = addTime;
-                st.total = addTime;
-                st.interval = setInterval(() => {
-                    if (st.remaining > 0) {
-                        st.remaining--;
-                        updateLCD();
-                        renderStations();
-                    } else {
-                        clearInterval(st.interval);
-                        st.interval = null;
-                        st.total = 0;
-                        setConsole(`Port ${st.id} charging complete. Session ended.`);
-                        updateLCD();
-                        renderStations();
-                    }
-                }, 200); // 200ms per tick = fast demo (real = 1000ms)
-            }
-
-            setConsole(`Port ${st.id} charging started — ${fmtTime(addTime)} allocated.`);
-            coins = 0;
-            document.getElementById('coinBadge').textContent = 0;
-            updateLCD();
-            renderStations();
-        }
-
-        // Init
-        renderStations();
-        updateLCD();
-    </script>
+function startPort(i){
+  if(!coins||sts[i].rem>0) return;
+  const add=coins*SECS;
+  sts[i].rem=add; sts[i].total=add;
+  coins=0; document.getElementById('cNum').textContent=0;
+  log(`PORT ${sts[i].id} charging started — ${fmt(add)} allocated.`);
+  sts[i].iv=setInterval(()=>{
+    if(sts[i].rem>0){ sts[i].rem--; updateLCD(); render(); }
+    else{
+      clearInterval(sts[i].iv); sts[i].iv=null; sts[i].total=0;
+      log(`PORT ${sts[i].id} session complete. Relay opened.`);
+      updateLCD(); render();
+    }
+  },200);
+  updateLCD(); render();
+}
+render(); updateLCD();
+</script>
 </body>
-
 </html>
