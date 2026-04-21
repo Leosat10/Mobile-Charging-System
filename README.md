@@ -6,7 +6,7 @@
 
 ## Live Demo (Web Showcase)
 
-**[View the interactive project page → leosat10.github.io](https://leosat10.github.io)**
+**[View the interactive project page → leosat10.github.io]([https://leosat10.github.io](https://leosat10.github.io/Mobile-Charging-System/))**
 
 Experience a live simulation of the coin insertion, port selection, and countdown timer — no hardware needed!
 
